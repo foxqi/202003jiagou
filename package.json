@@ -1,0 +1,29 @@
+{
+  "name": "202003jiaogou3",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build:dev": "rollup -c",
+    "serve":"cross-env ENV=development rollup -c -w"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/foxqi/202003jiagou.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/foxqi/202003jiagou/issues"
+  },
+  "homepage": "https://github.com/foxqi/202003jiagou#readme",
+  "devDependencies": {
+    "@babel/core": "^7.9.0",
+    "@babel/preset-env": "^7.9.5",
+    "cross-env": "^7.0.2",
+    "rollup": "^2.6.1",
+    "rollup-plugin-babel": "^4.4.0",
+    "rollup-plugin-serve": "^1.0.1"
+  }
+}
