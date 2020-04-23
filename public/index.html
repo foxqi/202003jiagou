@@ -6,8 +6,18 @@
     <title>Document</title>
 </head>
 <body>
+
+    <div id="app">
+        <p>{{name}}</p>
+        <span>{{age}}</span>
+    </div>
+
+
+
     <script src="/dist/umd/vue.js"></script>
-    <script>
+
+    <!-- 1.测试observe数据劫持 -->
+    <!-- <script>
         let vm = new Vue({
             el:'#app',
             data(){
@@ -37,8 +47,20 @@
 
 //2.测试
 // 如果给数组进行方法操作
-        vm._data.name.push({name:'zf'})
+        vm._data.name.push({name:'zf',age:8},9)
         console.log(vm._data);
+    </script> -->
+
+    <script>
+        let vm = new Vue({
+            el:'#app',
+            data(){
+                return {name:'zf',age:11}
+            }
+
+        })
+
     </script>
+
 </body>
 </html>

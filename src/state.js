@@ -29,7 +29,7 @@ function initData(vm){
     // MVVM模式 数据变化可以驱动视图变化
 
     //  Object.defineroperty() 给属性增加get方法和set方法
-    observe(data);//响应式原理
+    observe(data);//1.响应式原理
 
     }
 function initComputed(){}
