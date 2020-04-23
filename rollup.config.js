@@ -17,7 +17,7 @@ export default{
     process.env.ENV === 'development'?serve({
             open:true,
             openPage:'/public/index.html',//默认打开html的路径
-            port:3000,
+            port:9999,
             contentBase:''
         }):null
     ]

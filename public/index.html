@@ -11,14 +11,34 @@
         let vm = new Vue({
             el:'#app',
             data(){
-                return {name:'ququ'}
+                // 这里是写observe数据劫持
+                // 1.如果值是对象
+                // return {name:'ququ',age:11,address:{
+                //     number:0,
+                //     name:'xxx'
+                // }}
+                // 2.如果值是数组
+                return {name:[{a:1},{b:2}]}
             },
             computed(){},
             watch(){}
 
         })
-        console.log(vm._data);
+// 这里值是写observe数据劫持
+//1.测试
+        // 这里只是测试   更改属性值
+        // vm._data.name='jw'
+        // vm._data.address.name='lili'
+        // console.log(vm._data);
         
+        // 这里只是测试   更改整个对象
+       // vm._data.address={a:1,n:{qu:'asdf'}}
+        // vm._data.address.n=555
+
+//2.测试
+// 如果给数组进行方法操作
+        vm._data.name.push({name:'zf'})
+        console.log(vm._data);
     </script>
 </body>
 </html>
