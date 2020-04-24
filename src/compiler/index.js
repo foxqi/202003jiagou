@@ -26,25 +26,82 @@ render函数返回的是虚拟dom，现在做的是把template变成render函数
  * arguments[0] = 匹配到的标签  arguments[1] = 匹配到的标签名字 
  */
  const endTag = new RegExp(`^<\\/${qnameCapture}[^>]*>`)// 匹配标签结尾的闭比如</div>
- // 匹配属性
- const attribute = /^\s*([^\s"'<>\/=]+)(?:\s*(=)\s*(?:"([^"]*)"+|'([^']*)'+|([^\s"'=<>`]+)))?/
-
+ const attribute = /^\s*([^\s"'<>\/=]+)(?:\s*(=)\s*(?:"([^"]*)"+|'([^']*)'+|([^\s"'=<>`]+)))?/ // 匹配属性
  const startTagClose = /^\s*(\/?)>/   // 匹配标签结束的 >
-
  const defaultTagRE = /\{\{((?:.|\n)+?)\}\}/g // 匹配默认的分隔符 "{{}}"
 
+ function start(tagName,attrs){
+    console.log('开始标签：',tagName,'属性是：',attrs);
+    
+ }
 
+function parseHTML(html){
+    // 不停的解析html
+   while (html){
+      let textEnd = html.indexOf('<');
+      if(textEnd == 0){
+        //   如果当前索引为0  肯定是一个标签  开始标签  结束标签
+       let startTagMatch = parseSartTag();//通过这个方法获取到匹配的结果 tagName，attrs
+       start(startTagMatch.tagName,startTagMatch.attrs)
+      }  
+      let text;
+      if(textEnd >= 0){
+          text = html.substring(0,textEnd)
+      }
+      if(text){
+          advance(text.length);
+          ChannelSplitterNode(text)
+          break;
+      }
+   }
+   function advance(n){
+      html = html.substring(n);
+   }
+    function parseSartTag(){
+        let start = html.match(startTagOpen)
+        if(start){
+            const match={
+                tagName:start[1],
+                attrs:[]
+            }
+            advance(start[0].length);//将标签删除
+            let end,attr ;
+            while(!(end = html.match(startTagClose)) && (attr = html.match(attribute))  ){
+                // 将属性进行解析
+                advance(start[0].length);//将属性去掉
+                match.attrs.push({
+                    name:attr[1],
+                    value:attr[3] || attr[4] || attr[5]
+                });//放在了attrs这个属性中
+    
+            }
+            if(end){//去掉开始标签的 >
+                advance(end[0].length);
+            }
+            return match
+            console.log(match)
+            console.log(html)
+        }
+    }
+}
 
 
 export function compileToFunction(template){
     console.log(template,'---');
-    
+    let root = parseHTML(template)
 
     return function render(){
 
     }
 }
-
+/**
+ * 通过上面的正则，可以把下面的html编译成
+ * start div:  attr:[{name:'id',value:'app'}]
+ * start p
+ * text hello
+ * end p
+ * end div 
+ */
 /*
 <div id="app">
     <p>hello</p>

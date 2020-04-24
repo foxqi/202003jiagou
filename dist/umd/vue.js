@@ -265,10 +265,106 @@
 
   //将html变成函数的话，会用到ast语法树
 
+  /*ast语法树  和 虚拟到dom有什么区别
+  ast语法树 是 用对象来编译html语法的（下面的原理）
+  虚拟dom 是  用对象来描述dom节点的（也就是那个html下面有div标签，div下面有p，span标签等的dom节点）
+
+
+
+  render函数返回的是虚拟dom，现在做的是把template变成render函数
+  */
+  // vue源码
+  // ?:匹配不补货
+  var ncname = '[a-zA-Z_][\\-\\.0-9_a-zA-Z]*'; //命名空间：表示能匹配到abc-aaa这样的一个字符串
+
+  var qnameCapture = "((?:".concat(ncname, "\\:)?").concat(ncname, ")"); //命名空间标签：<aaa:asdee>
+  // 匹配开始标签开始部分
+
+  var startTagOpen = new RegExp("^<".concat(qnameCapture)); //标签开头的正则，捕获的内容是标签名
+
+  var attribute = /^\s*([^\s"'<>\/=]+)(?:\s*(=)\s*(?:"([^"]*)"+|'([^']*)'+|([^\s"'=<>`]+)))?/; // 匹配属性
+
+  var startTagClose = /^\s*(\/?)>/; // 匹配标签结束的 >
+
+  function start(tagName, attrs) {
+    console.log('开始标签：', tagName, '属性是：', attrs);
+  }
+
+  function parseHTML(html) {
+    // 不停的解析html
+    while (html) {
+      var textEnd = html.indexOf('<');
+
+      if (textEnd == 0) {
+        //   如果当前索引为0  肯定是一个标签  开始标签  结束标签
+        var startTagMatch = parseSartTag(); //通过这个方法获取到匹配的结果 tagName，attrs
+
+        start(startTagMatch.tagName, startTagMatch.attrs);
+      }
+
+      var text = void 0;
+
+      if (textEnd >= 0) {
+        text = html.substring(0, textEnd);
+      }
+
+      if (text) {
+        advance(text.length);
+        ChannelSplitterNode(text);
+        break;
+      }
+    }
+
+    function advance(n) {
+      html = html.substring(n);
+    }
+
+    function parseSartTag() {
+      var start = html.match(startTagOpen);
+
+      if (start) {
+        var match = {
+          tagName: start[1],
+          attrs: []
+        };
+        advance(start[0].length); //将标签删除
+
+        var end, attr;
+
+        while (!(end = html.match(startTagClose)) && (attr = html.match(attribute))) {
+          // 将属性进行解析
+          advance(start[0].length); //将属性去掉
+
+          match.attrs.push({
+            name: attr[1],
+            value: attr[3] || attr[4] || attr[5]
+          }); //放在了attrs这个属性中
+        }
+
+        if (end) {
+          //去掉开始标签的 >
+          advance(end[0].length);
+        }
+
+        return match;
+      }
+    }
+  }
+
   function compileToFunction(template) {
     console.log(template, '---');
+    var root = parseHTML(template);
     return function render() {};
   }
+  /**
+   * 通过上面的正则，可以把下面的html编译成
+   * start div:  attr:[{name:'id',value:'app'}]
+   * start p
+   * text hello
+   * end p
+   * end div 
+   */
+
   /*
   <div id="app">
       <p>hello</p>
