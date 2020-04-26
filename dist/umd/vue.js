@@ -42,6 +42,62 @@
     return Constructor;
   }
 
+  function _slicedToArray(arr, i) {
+    return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
+  }
+
+  function _arrayWithHoles(arr) {
+    if (Array.isArray(arr)) return arr;
+  }
+
+  function _iterableToArrayLimit(arr, i) {
+    if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return;
+    var _arr = [];
+    var _n = true;
+    var _d = false;
+    var _e = undefined;
+
+    try {
+      for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+        _arr.push(_s.value);
+
+        if (i && _arr.length === i) break;
+      }
+    } catch (err) {
+      _d = true;
+      _e = err;
+    } finally {
+      try {
+        if (!_n && _i["return"] != null) _i["return"]();
+      } finally {
+        if (_d) throw _e;
+      }
+    }
+
+    return _arr;
+  }
+
+  function _unsupportedIterableToArray(o, minLen) {
+    if (!o) return;
+    if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+    var n = Object.prototype.toString.call(o).slice(8, -1);
+    if (n === "Object" && o.constructor) n = o.constructor.name;
+    if (n === "Map" || n === "Set") return Array.from(n);
+    if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+  }
+
+  function _arrayLikeToArray(arr, len) {
+    if (len == null || len > arr.length) len = arr.length;
+
+    for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
+
+    return arr2;
+  }
+
+  function _nonIterableRest() {
+    throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+  }
+
   // 工具库
 
   /**
@@ -263,16 +319,6 @@
     observe(data); //1.响应式原理
   }
 
-  //将html变成函数的话，会用到ast语法树
-
-  /*ast语法树  和 虚拟到dom有什么区别
-  ast语法树 是 用对象来编译html语法的（下面的原理）
-  虚拟dom 是  用对象来描述dom节点的（也就是那个html下面有div标签，div下面有p，span标签等的dom节点）
-
-
-
-  render函数返回的是虚拟dom，现在做的是把template变成render函数
-  */
   // vue源码
   // ?:匹配不补货
   var ncname = '[a-zA-Z_][\\-\\.0-9_a-zA-Z]*'; //命名空间：表示能匹配到abc-aaa这样的一个字符串
@@ -282,12 +328,77 @@
 
   var startTagOpen = new RegExp("^<".concat(qnameCapture)); //标签开头的正则，捕获的内容是标签名
 
+  /**
+   * 这是验证上面的正则是否正确
+   * let r = '<a:b>'.match(startTagOpen);
+   * console.log(r)
+   * 
+   * 获得这样的东西  ["<a:b", "a:b", index: 0, input: "<a:b>", groups: undefined]
+   * 
+   * arguments[0] = 匹配到的标签  arguments[1] = 匹配到的标签名字 
+   */
+
+  var endTag = new RegExp("^<\\/".concat(qnameCapture, "[^>]*>")); // 匹配标签结尾的闭比如</div>
+
   var attribute = /^\s*([^\s"'<>\/=]+)(?:\s*(=)\s*(?:"([^"]*)"+|'([^']*)'+|([^\s"'=<>`]+)))?/; // 匹配属性
 
   var startTagClose = /^\s*(\/?)>/; // 匹配标签结束的 >
 
+  var root = null; //ast语法树的树根
+
+  var currentParent; //标识当前父亲是谁
+
+  var stack = [];
+  var ELEMENT_TYPE = 1;
+  var TEXT_TYPE = 3;
+
+  function createASTElement(tagName, attrs) {
+    return {
+      tag: tagName,
+      type: ELEMENT_TYPE,
+      children: [],
+      attrs: attrs,
+      parent: null
+    };
+  }
+
   function start(tagName, attrs) {
-    console.log('开始标签：', tagName, '属性是：', attrs);
+    //console.log('开始标签：', tagName, '属性是：', attrs);
+    //遇到开始标签 就创建一个ast元素
+    var element = createASTElement(tagName, attrs);
+
+    if (!root) {
+      root = element;
+    }
+
+    currentParent = element; //把当前元素标记成父ast树
+
+    stack.push(element); //将开始标签存放在栈中
+  }
+
+  function chars(text) {
+    // console.log('文本是：', text)
+    text = text.replace(/\s/g, '');
+
+    if (text) {
+      currentParent.children.push({
+        text: text,
+        type: TEXT_TYPE
+      });
+    }
+  }
+
+  function end(tagName) {
+    // console.log('结束标签', tagName)
+    var element = stack.pop(); //拿到的是ast对象
+    //我要标识当前这个p是属于这个div的儿子的
+
+    currentParent = stack[stack.length - 1];
+
+    if (currentParent) {
+      element.parent = currentParent;
+      currentParent.children.push(element); //实现了一个树的父子关系
+    }
   }
 
   function parseHTML(html) {
@@ -299,7 +410,20 @@
         //   如果当前索引为0  肯定是一个标签  开始标签  结束标签
         var startTagMatch = parseSartTag(); //通过这个方法获取到匹配的结果 tagName，attrs
 
-        start(startTagMatch.tagName, startTagMatch.attrs);
+        if (startTagMatch) {
+          start(startTagMatch.tagName, startTagMatch.attrs); //1.解析开始标签
+
+          continue; //如果开始标签匹配完毕后，继续下一次 匹配
+        }
+
+        var endTagMatch = html.match(endTag);
+
+        if (endTagMatch) {
+          advance(endTagMatch[0].length);
+          end(); //2.解析结束标签
+
+          continue;
+        }
       }
 
       var text = void 0;
@@ -310,8 +434,7 @@
 
       if (text) {
         advance(text.length);
-        ChannelSplitterNode(text);
-        break;
+        chars(text); //3.解析文本
       }
     }
 
@@ -329,11 +452,11 @@
         };
         advance(start[0].length); //将标签删除
 
-        var end, attr;
+        var _end, attr;
 
-        while (!(end = html.match(startTagClose)) && (attr = html.match(attribute))) {
+        while (!(_end = html.match(startTagClose)) && (attr = html.match(attribute))) {
           // 将属性进行解析
-          advance(start[0].length); //将属性去掉
+          advance(attr[0].length); //将属性去掉
 
           match.attrs.push({
             name: attr[1],
@@ -341,19 +464,64 @@
           }); //放在了attrs这个属性中
         }
 
-        if (end) {
+        if (_end) {
           //去掉开始标签的 >
-          advance(end[0].length);
+          advance(_end[0].length);
+          return match;
         }
-
-        return match;
       }
     }
+
+    return root;
+  }
+
+  function genProps(attrs) {
+    //处理属性，拼接成属性的字符串
+    var str = '';
+
+    for (var i = 0; i < attrs.length; i++) {
+      var attr = attrs[i];
+
+      if (attr.name === 'style') {
+        (function () {
+          //style="color:red;font-size:14px" => {style:{color:'red'},id:name}
+          var obj = {};
+          attr.value.split(';').forEach(function (item) {
+            var _item$split = item.split(':'),
+                _item$split2 = _slicedToArray(_item$split, 2),
+                key = _item$split2[0],
+                value = _item$split2[1];
+
+            obj[key] = value;
+          });
+          attr.value = obj;
+        })();
+      }
+
+      str += "".concat(attr.name, ":").concat(JSON.stringify(attr.value), ",");
+    }
+
+    return "{".concat(str.slice(0, -1), "}");
+  }
+
+  function generate(el) {
+    //[{name:'id',value:'app'},{}]  => {id:app,a:1,b:2}
+    var code = "_c(\"".concat(el.tag, "\",").concat(el.attrs.length ? genProps(el.attrs) : 'undefined', ")\n    \n    ");
+    return code;
   }
 
   function compileToFunction(template) {
-    console.log(template, '---');
-    var root = parseHTML(template);
+    //console.log(template, '---');
+    //1）解析html字符串，将html字符串 => ast语法树
+    var root = parseHTML(template); // console.log(root)
+
+    var code = generate(root); //2)需要将ast语法树生成最终的render函数  就是字符串拼接 （模板引擎）
+    // 核心思路就是将模板转换成 下面这段字符串
+    // <div id="app">hello<p>{{name}}</p><span>{{age}}</span></div>
+    // 将ast树，再次转换成js的语法树
+    // _c('div',{id:'app'},_c('p',undefined,_v(_s(name))),_c('span',undefined,_v(_s(age))))
+
+    console.log(code);
     return function render() {};
   }
   /**
@@ -362,7 +530,7 @@
    * start p
    * text hello
    * end p
-   * end div 
+   * end div
    */
 
   /*
