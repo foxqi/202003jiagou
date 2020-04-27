@@ -1,6 +1,8 @@
 import { initState } from './state'
 
 import { compileToFunction } from './compiler/index.js'
+import {mountComponent}  from './lifecycle'
+ 
 // 在原型上添加一个init方法
 export function initMixin(Vue) {
     Vue.prototype._init = function (options) {
@@ -60,7 +62,7 @@ export function initMixin(Vue) {
         console.log(options.render, vm)
 
         // 3.挂载组件：渲染当前的组件或者叫挂载这个组件
-        mountComponent();
+        mountComponent(vm,el);
 
 
     }

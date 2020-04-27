@@ -587,7 +587,7 @@
     var code = generate(root); //2)需要将ast语法树生成最终的render函数  就是字符串拼接 （模板引擎）
     // 核心思路就是将模板转换成 下面这段字符串
     // <div id="app">hello<p>{{name}}</p><span>{{age}}</span></div>
-    // 将ast树，再次转换成js的语法树
+    // 将ast树，再次转换成js的语法树（重点：这个是js语法 执行后返回的是虚拟dom）
     // _c('div',{id:'app'},_c('p',undefined,_v(_s(name))),_c('span',undefined,_v(_s(age))))
     // 所有的模板引擎实现，都需要new Function + with
     //这里加的with方法是为了实现ƒ anonymous(
@@ -598,8 +598,8 @@
     //     }
     // 这个函数，也就是render这个函数的，因为这个才是将模板进行编译的
 
-    var renderFn = new Function("with(this){return ".concat(code, "} ")); // console.log(renderFn);
-    //vue的render  它返回的是虚拟dom
+    var renderFn = new Function("with(this){return ".concat(code, "} ")); // console.log(renderFn);(renderFn返回的是一个render函数，这个函数调用后就会形成虚拟dom)
+    //vue的render  它返回的是虚拟dom()
 
     return renderFn;
   }
@@ -636,6 +636,12 @@
       }]
   }
   */
+
+  function mountComponent(vm, el) {
+    var options = vm.$options; //render
+
+    vm.$el = el; //代表真实的dom元素
+  }
 
   function initMixin(Vue) {
     Vue.prototype._init = function (options) {
@@ -692,8 +698,12 @@
 
       console.log(options.render, vm); // 3.挂载组件：渲染当前的组件或者叫挂载这个组件
 
-      mountComponent();
+      mountComponent(vm, el);
     };
+  }
+
+  function renderMixin(Vue) {
+    Vue.prototype._render = function (params) {};
   }
 
   // 自写vue的核心代码,只是vue的一个声明
@@ -705,6 +715,8 @@
 
 
   initMixin(Vue); //给vue原型上添加一个_init方法
+
+  renderMixin(Vue);
 
   return Vue;
 
