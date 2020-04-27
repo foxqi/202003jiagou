@@ -121,6 +121,24 @@
       value: value
     });
   }
+  /**
+   * 取值时实现代理效果
+   *  // 为了让用户更好的使用，我希望可以直接vm.xx。vm直接取值
+   * @param {*} vm 
+   * @param {*} source 
+   * @param {*} key 
+   */
+
+  function proxy(vm, source, key) {
+    Object.defineProperty(vm, key, {
+      get: function get() {
+        return vm[source][key];
+      },
+      set: function set(newValue) {
+        vm[source][key] = newValue;
+      }
+    });
+  }
 
   // 这里为什么要重写数组的方法呢，是因为用户是在前台把数组更新了，但是我们怎么获取更新的数组呢，只能在监听到用户传的方法也就是前面的value.__protp__=arrayMethods获取到所有的方法，然后这边在根据方法和传入的值在进行数组更新，然后在返回新的数组
   //  我要重写数组的哪些方法  ：7个  push shift  unshift  pop  reverse sort splice 会导致数组本身发生变化
@@ -315,6 +333,11 @@
     // 对象劫持  用户改变了数据  我希望可以得到通知  后可以  刷新页面
     // MVVM模式 数据变化可以驱动视图变化
     //  Object.defineroperty() 给属性增加get方法和set方法
+    // 为了让用户更好的使用，我希望可以直接vm.xx。vm直接取值
+
+    for (var key in data) {
+      proxy(vm, '_data', key);
+    }
 
     observe(data); //1.响应式原理
   }
@@ -475,6 +498,8 @@
     return root;
   }
 
+  var defaultTagRE = /\{\{((?:.|\n)+?)\}\}/g; // 匹配默认的分隔符 "{{}}"
+
   function genProps(attrs) {
     //处理属性，拼接成属性的字符串
     var str = '';
@@ -504,9 +529,53 @@
     return "{".concat(str.slice(0, -1), "}");
   }
 
+  function genChildren(el) {
+    var children = el.children;
+
+    if (children && children.length > 0) {
+      return "".concat(children.map(function (c) {
+        return gen(c);
+      }).join(','));
+    } else {
+      return false;
+    }
+  }
+
+  function gen(node) {
+    if (node.type == 1) {
+      //元素标签
+      return generate(node);
+    } else {
+      var text = node.text; // a {{name}}  b{{age}}  c
+      // _v("a"+_s(name)+"b"+_s(age)+'c')
+
+      var tokens = [];
+      var match, index;
+      var lastIndex = defaultTagRE.lastIndex = 0; // 正则的问题 lastIndex设为0才可以用exec正常匹配（具体为什么自己百度） 只要全局匹配，就需要将lastIndex每次匹配的时候就调到0处
+
+      while (match = defaultTagRE.exec(text)) {
+        index = match.index;
+
+        if (index > lastIndex) {
+          tokens.push(JSON.stringify(text.slice(lastIndex, index)));
+        }
+
+        tokens.push("_s(".concat(match[1].trim(), ")"));
+        lastIndex = index + match[0].length;
+      }
+
+      if (lastIndex < text.length) {
+        tokens.push(JSON.stringify(text.slice(lastIndex)));
+      }
+
+      return "_v(".concat(tokens.join('+'), ")");
+    }
+  }
+
   function generate(el) {
     //[{name:'id',value:'app'},{}]  => {id:app,a:1,b:2}
-    var code = "_c(\"".concat(el.tag, "\",").concat(el.attrs.length ? genProps(el.attrs) : 'undefined', ")\n    \n    ");
+    var children = genChildren(el);
+    var code = "_c(\"".concat(el.tag, "\",").concat(el.attrs.length ? genProps(el.attrs) : 'undefined').concat(children ? ",".concat(children) : '', ") ");
     return code;
   }
 
@@ -520,9 +589,19 @@
     // <div id="app">hello<p>{{name}}</p><span>{{age}}</span></div>
     // 将ast树，再次转换成js的语法树
     // _c('div',{id:'app'},_c('p',undefined,_v(_s(name))),_c('span',undefined,_v(_s(age))))
+    // 所有的模板引擎实现，都需要new Function + with
+    //这里加的with方法是为了实现ƒ anonymous(
+    // ) {
+    //     with(this){return _c("div",{id:"app",style:{"color":" red"}},_v("hello"),_c("p",undefined,_v(_s(name))),_c("span",undefined,_v(_s(age)))
+    //         )
+    //         } 
+    //     }
+    // 这个函数，也就是render这个函数的，因为这个才是将模板进行编译的
 
-    console.log(code);
-    return function render() {};
+    var renderFn = new Function("with(this){return ".concat(code, "} ")); // console.log(renderFn);
+    //vue的render  它返回的是虚拟dom
+
+    return renderFn;
   }
   /**
    * 通过上面的正则，可以把下面的html编译成
@@ -608,7 +687,12 @@
 
         var render = compileToFunction(template);
         options.render = render; //这个是为了用户传了render用用户传的，用户没传，就用自己写的
-      }
+      } // options.render
+
+
+      console.log(options.render, vm); // 3.挂载组件：渲染当前的组件或者叫挂载这个组件
+
+      mountComponent();
     };
   }
 

@@ -20,5 +20,22 @@ export function def(data,key,value){
         value:value
     })
 }
+/**
+ * 取值时实现代理效果
+ *  // 为了让用户更好的使用，我希望可以直接vm.xx。vm直接取值
+ * @param {*} vm 
+ * @param {*} source 
+ * @param {*} key 
+ */
+export function proxy(vm, source, key) {
+    Object.defineProperty(vm, key, {
+        get() {
+            return vm[source][key]
+        },
+        set(newValue) {
+            vm[source][key] = newValue
+        }
+    })
+}
 
 

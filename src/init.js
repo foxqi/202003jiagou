@@ -1,38 +1,38 @@
-import {initState} from './state'
+import { initState } from './state'
 
-import {compileToFunction} from './compiler/index.js'
+import { compileToFunction } from './compiler/index.js'
 // 在原型上添加一个init方法
-export function initMixin(Vue){
-    Vue.prototype._init =function(options){
-    //    数据的劫持
-    const vm =this;//vue中使用this.$options 指代
-    vm.$options = options;
+export function initMixin(Vue) {
+    Vue.prototype._init = function (options) {
+        //    数据的劫持
+        const vm = this;//vue中使用this.$options 指代
+        vm.$options = options;
 
-    // 初始化状态
-    initState(vm);//分割代码（这里面有1.数据劫持）
-
-
+        // 初始化状态
+        initState(vm);//分割代码（这里面有1.数据劫持）
 
 
 
-    // 2.模板编译
-    // 如果用户传入了el属性  需要将页面渲染出出来
-    // 如果用户传入了el  就要实现挂载流程
-     if(vm.$options.el){
-         vm.$mount(vm.$options.el);
-     }
+
+
+        // 2.模板编译
+        // 如果用户传入了el属性  需要将页面渲染出出来
+        // 如果用户传入了el  就要实现挂载流程
+        if (vm.$options.el) {
+            vm.$mount(vm.$options.el);
+        }
 
     }
-    Vue.prototype.$mount = function(el){
+    Vue.prototype.$mount = function (el) {
         const vm = this;
         const options = vm.$options;
         el = document.querySelector(el);
 
         // 默认先会查找有没有render方法，没有render  会 采用template， template也没有就用el中的内容
-        if(!options.render){
+        if (!options.render) {
             // 对模板进行编译
             let template = options.template;//取出模板
-            if(!template && el){
+            if (!template && el) {
                 template = el.outerHTML;
             }
             // console.log(template);
@@ -52,11 +52,17 @@ export function initMixin(Vue){
             }
             */
             // 模板进行编译用compileToFunction这个函数(自己封装的)，也就是把template这个html编译成一个函数
-            const render =compileToFunction(template);
+            const render = compileToFunction(template);
             options.render = render;//这个是为了用户传了render用用户传的，用户没传，就用自己写的
         }
-    
-    
+
+        // options.render
+        console.log(options.render, vm)
+
+        // 3.挂载组件：渲染当前的组件或者叫挂载这个组件
+        mountComponent();
+
+
     }
 }
 
