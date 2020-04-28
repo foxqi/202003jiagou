@@ -59,9 +59,15 @@
             data(){
                 return {name:'zf',age:11}
             },
-            beforCreate(){
+            beforeCreate(){
                 console.log('user',this);
                 
+            },
+            beforeMount(){
+                console.log(this.$el,'前')
+            },
+            mounted(){
+                console.log(this.$el,'后')
             }
 
         })

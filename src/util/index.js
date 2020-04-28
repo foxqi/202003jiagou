@@ -50,7 +50,6 @@ const LIFECYCLE_HOOKS = [
 ];
 let strats = {}
 function mergeHook(parentVal, childVal) {
-    console.log(childVal)
     if (childVal) {
         if (parentVal) {
             return parentVal.concat(childVal);

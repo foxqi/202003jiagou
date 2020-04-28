@@ -193,8 +193,6 @@
   var strats = {};
 
   function mergeHook(parentVal, childVal) {
-    console.log(childVal);
-
     if (childVal) {
       if (parentVal) {
         return parentVal.concat(childVal);
@@ -780,7 +778,9 @@
 
       var el = createElm(vnode);
       parentElm.insertBefore(el, oldElm.nextSibling);
-      parentElm.removeChild(oldElm);
+      parentElm.removeChild(oldElm); // 需要将渲染好的结构返回
+
+      return el;
     }
 
     function createElm(vnode) {
@@ -1016,13 +1016,13 @@
 
     Vue.mixin({
       a: 1,
-      beforCreate: function beforCreate() {
+      beforeCreate: function beforeCreate() {
         console.log('mixin 1');
       }
     });
     Vue.mixin({
       b: 2,
-      beforCreate: function beforCreate() {
+      beforeCreate: function beforeCreate() {
         console.log('mixin 2');
       }
     });
