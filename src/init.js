@@ -1,19 +1,25 @@
 import { initState } from './state'
 
 import { compileToFunction } from './compiler/index.js'
-import {mountComponent}  from './lifecycle'
- 
+import { mountComponent,callHook } from './lifecycle'
+
+import { mergeOptions } from './util/index'
+
 // 在原型上添加一个init方法
 export function initMixin(Vue) {
     Vue.prototype._init = function (options) {
         //    数据的劫持
         const vm = this;//vue中使用this.$options 指代
-        vm.$options = options;
 
+        // vm.$options = options;
+        // 下面这个是合并多个方法才开始写成这样的
+        // 将用户传递的  和  全局的进行一个合并
+        vm.$options = mergeOptions(vm.constructor.options,options);
+        callHook(vm,'beforeCreate');
         // 初始化状态
         initState(vm);//分割代码（这里面有1.数据劫持）
 
-
+        callHook(vm,'created')
 
 
 
@@ -27,6 +33,8 @@ export function initMixin(Vue) {
     }
     Vue.prototype.$mount = function (el) {
         const vm = this;
+
+
         const options = vm.$options;
         el = document.querySelector(el);
 
@@ -59,10 +67,10 @@ export function initMixin(Vue) {
         }
 
         // options.render
-        console.log(options.render, vm)
+        // console.log(options.render, vm)
 
         // 3.挂载组件：渲染当前的组件或者叫挂载这个组件
-        mountComponent(vm,el);
+        mountComponent(vm, el);
 
 
     }

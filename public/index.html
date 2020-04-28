@@ -12,6 +12,8 @@
         <span>{{age}}</span>
     </div>
 
+    xxx
+
 
 
     <script src="/dist/umd/vue.js"></script>
@@ -56,6 +58,10 @@
             el:'#app',
             data(){
                 return {name:'zf',age:11}
+            },
+            beforCreate(){
+                console.log('user',this);
+                
             }
 
         })
