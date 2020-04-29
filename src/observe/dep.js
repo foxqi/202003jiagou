@@ -4,8 +4,12 @@ class Dep {
         this.id = id++;
         this.subs = []
     }
+    addSub(watcher){
+        this.subs.push(watcher);
+    }
     depend() {
-        this.subs.push(Dep.target);//观察者模式
+        // 让wacher记住我当前的dep
+        Dep.target.addDep(this);
     }
     notify() {
         this.subs.forEach(watcher => watcher.update())

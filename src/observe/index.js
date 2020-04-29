@@ -88,7 +88,7 @@ function defineReactive(data,key,value){
     observe(value);//这里的调用，是为了递归，获取到对象中的对象的属性:递归实现深度检测，但是如果层级太多使用递归会很浪费性能
     Object.defineProperty(data,key,{
         get(){//获取值的时候作一些操作
-           console.log('取值')//每个属性都对应着自己的watcher
+           //console.log('取值')//每个属性都对应着自己的watcher
            if(Dep.target){//如果当前有watcher
             dep.depend();//意味着我要将watcher存起来
 

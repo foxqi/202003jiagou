@@ -301,9 +301,15 @@
     }
 
     _createClass(Dep, [{
+      key: "addSub",
+      value: function addSub(watcher) {
+        this.subs.push(watcher);
+      }
+    }, {
       key: "depend",
       value: function depend() {
-        this.subs.push(Dep.target); //观察者模式
+        // 让wacher记住我当前的dep
+        Dep.target.addDep(this);
       }
     }, {
       key: "notify",
@@ -424,8 +430,7 @@
     Object.defineProperty(data, key, {
       get: function get() {
         //获取值的时候作一些操作
-        console.log('取值'); //每个属性都对应着自己的watcher
-
+        //console.log('取值')//每个属性都对应着自己的watcher
         if (Dep.target) {
           //如果当前有watcher
           dep.depend(); //意味着我要将watcher存起来
@@ -802,10 +807,25 @@
       this.id = id$1++;
       this.getter = exprOrFn; //将内部传过来的回调函数  放到getter属性上
 
+      this.depsId = new Set(); //es6中的集合（不能放重复项）
+
+      this.deps = [];
       this.get(); //调用get方法，会让渲染watcher执行
     }
 
     _createClass(Watcher, [{
+      key: "addDep",
+      value: function addDep(dep) {
+        //watcher 里不能放重复的dep dep里不能放重复的watcher
+        var id = dep.id;
+
+        if (!this.depsId.has(id)) {
+          this.depsId.add(id);
+          this.deps.push(dep);
+          dep.addSub(this);
+        }
+      }
+    }, {
       key: "get",
       value: function get() {
         pushTarget(this); //把watcher存起来 在Dep.target
@@ -890,8 +910,7 @@
       var vm = this; // 我要通过虚拟节点  渲染出真实的dom
 
       vm.$el = patch(vm.$el, vnode); //需要用虚拟节点创建出真实节点  替换掉  真实的$el
-
-      console.log(vnode);
+      // console.log(vnode)
     };
   }
   function mountComponent(vm, el) {
