@@ -10,9 +10,10 @@
     <div id="app" style="color: red">hello
         <p>{{name}}</p>
         <span>{{age}}</span>
+        {{age}}
     </div>
 
-    xxx
+    <!-- xxx -->
 
 
 
@@ -53,7 +54,8 @@
         console.log(vm._data);
     </script> -->
 
-    <script>
+    <!-- 生命周期合并
+        <script>
         let vm = new Vue({
             el:'#app',
             data(){
@@ -73,7 +75,26 @@
         })
         console.log(vm.name)
 
-    </script>
+    </script> -->
+
+
+    <!-- 依赖收集 -->
+    <script>
+        let vm = new Vue({
+            el:'#app',
+            data(){
+                return {age:{age:100}}
+            },
+          
+
+        })
+
+        setTimeout(()=>{
+// 希望数据变化，可以自动的重新执行我们的渲染watcher
+            vm.age=1000;
+            // vm._update(vm._render())//只是原理，但用户不希望没更改一条数据就手动更改，所有要写依赖收集
+        },1000)
+    </script> 
 
 </body>
 </html>

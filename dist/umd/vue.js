@@ -290,6 +290,44 @@
     };
   });
 
+  var id = 0; //每个dep也要有每个标识
+
+  var Dep = /*#__PURE__*/function () {
+    function Dep() {
+      _classCallCheck(this, Dep);
+
+      this.id = id++;
+      this.subs = [];
+    }
+
+    _createClass(Dep, [{
+      key: "depend",
+      value: function depend() {
+        this.subs.push(Dep.target); //观察者模式
+      }
+    }, {
+      key: "notify",
+      value: function notify() {
+        this.subs.forEach(function (watcher) {
+          return watcher.update();
+        });
+      }
+    }]);
+
+    return Dep;
+  }();
+
+  var stack = []; // 目前可以做到 将watcher保留起来  和  移除的功能
+
+  function pushTarget(watcher) {
+    Dep.target = watcher;
+    stack.push(watcher);
+  }
+  function popTarget() {
+    stack.pop();
+    Dep.target = stack[stack.length - 1];
+  }
+
   /**
    *   步骤一：先创建一个Observer类进行数据监听，如果传入进来的data是个  对象  的话，遍历对象，用Object.defineProperty中的get和set方法进行数据变化的监听，如果对象里面嵌套对象，那么就用递归的方式进行深度监听
    *   步骤二：如果传入进来的data是个  数组   的话，那么它会对索引进行监听并附有get和set方法,如果有一百万个数组那么会监听一百万次，很浪费性能，所以为了不给数组的索引进行get，set监听，遍历数组获得每个对象，在给里面的每个对象进行监听
@@ -380,11 +418,19 @@
 
 
   function defineReactive(data, key, value) {
+    var dep = new Dep();
     observe(value); //这里的调用，是为了递归，获取到对象中的对象的属性:递归实现深度检测，但是如果层级太多使用递归会很浪费性能
 
     Object.defineProperty(data, key, {
       get: function get() {
         //获取值的时候作一些操作
+        console.log('取值'); //每个属性都对应着自己的watcher
+
+        if (Dep.target) {
+          //如果当前有watcher
+          dep.depend(); //意味着我要将watcher存起来
+        }
+
         return value;
       },
       set: function set(newValue) {
@@ -394,6 +440,7 @@
         observe(newValue); //继续劫持用户设置的值，因为有可能用户设置的值是一个对象；这里深度劫持就会在这个对象里有set和get方法，就能再次进行更改监听
 
         value = newValue;
+        dep.notify(); //通知依赖的watcher来进行一个更新操作
       }
     });
   }
@@ -743,6 +790,8 @@
   }
   */
 
+  var id$1 = 0; //每个watcher都有一个标识
+
   var Watcher = /*#__PURE__*/function () {
     function Watcher(vm, exprOrFn, callback, options) {
       _classCallCheck(this, Watcher);
@@ -750,15 +799,25 @@
       this.vm = vm;
       this.callback = callback;
       this.options = options;
+      this.id = id$1++;
       this.getter = exprOrFn; //将内部传过来的回调函数  放到getter属性上
 
-      this.get();
+      this.get(); //调用get方法，会让渲染watcher执行
     }
 
     _createClass(Watcher, [{
       key: "get",
       value: function get() {
-        this.getter();
+        pushTarget(this); //把watcher存起来 在Dep.target
+
+        this.getter(); //渲染watcher的执行
+
+        popTarget(); //移除watcher
+      }
+    }, {
+      key: "update",
+      value: function update() {
+        this.get();
       }
     }]);
 
@@ -1012,21 +1071,20 @@
       // 如何实现俩个对象的合并
       this.options = mergeOptions(this.options, mixin);
     }; // 生命周期的合并策略  [beforeCreate,beforeCreate]
+    // Vue.mixin({
+    //     a: 1,
+    //     beforeCreate() {
+    //         console.log('mixin 1')
+    //     }
+    // })
+    // Vue.mixin({
+    //     b: 2,
+    //     beforeCreate() {
+    //         console.log('mixin 2')
+    //     }
+    // })
+    // console.log(Vue.options)
 
-
-    Vue.mixin({
-      a: 1,
-      beforeCreate: function beforeCreate() {
-        console.log('mixin 1');
-      }
-    });
-    Vue.mixin({
-      b: 2,
-      beforeCreate: function beforeCreate() {
-        console.log('mixin 2');
-      }
-    });
-    console.log(Vue.options);
   }
 
   // 自写vue的核心代码,只是vue的一个声明
