@@ -8,7 +8,8 @@ import Dep from './dep.js'
  *   步骤二：如果传入进来的data是个  数组   的话，那么它会对索引进行监听并附有get和set方法,如果有一百万个数组那么会监听一百万次，很浪费性能，所以为了不给数组的索引进行get，set监听，遍历数组获得每个对象，在给里面的每个对象进行监听
  *    步骤三：当data是个数组的话，如果用户对这个数组进行了方法调用改变数组（比如用了push，unshift等方法）我们也要对方法进行重写，进行监听，并重新赋值。
  * （这一步的大概逻辑是：会导致数组本身发生变化的方法写成一个数组，然后遍历在调用原生方法，将原生方法进行输出，具体看array.js）
- *       
+ * （这里好像还要有模板解析）    
+ * 步骤四：依赖收集
  * 
  * 
  * 
@@ -24,8 +25,9 @@ import Dep from './dep.js'
 class Observer{
    constructor(value){//这里的constructor是es6的新写法，一个类必须有 constructor 方法，一般 constructor 方法返回实例对象 this ，但是也可以指定  constructor 方法返回一个全新的对象，让返回的实例对象不是该类的实例。
     //这是constructor的概念https://www.jianshu.com/p/fc79756b1dc0
-
-
+/* 步骤四. start*/ 
+    this.dep = new Dep;//给数组用的
+/* 步骤四. end*/ 
 /* 步骤三.2 start*/ 
 //value.__ob__=this;//我给每一个监控过的对象都增加一个__ob__属性，这的this指的是Observer的实例,为了给后面的方法调用observerArray，进行数据监听
 // 上面的方法不能直接在vulue上加属性，因为下面的observe会进行数据监听，它会以为value增加新的数据，而上面的方法只是为了以后数据调用代码而进行赋值的，所以只能用下面的方法
@@ -45,7 +47,7 @@ class Observer{
 
 
         // 如果数组里放的是对象我在监控
-        this.observerArray(value);
+        this.observerArray(value);//这里虽然递归了，但是没有依赖收集
     }else{
         //vue如果数据的层次过多，需要递归的去解析对象中的属性，依次增加set和get方法
         this.walk(value)// 先考虑一步的数据
@@ -85,13 +87,27 @@ class Observer{
 /* 步骤一 start*/  
 function defineReactive(data,key,value){
     let dep = new Dep();
-    observe(value);//这里的调用，是为了递归，获取到对象中的对象的属性:递归实现深度检测，但是如果层级太多使用递归会很浪费性能
+    /* 步骤四 start*/ 
+    //  observe(value);//这里的调用，是为了递归，获取到对象中的对象的属性:递归实现深度检测，但是如果层级太多使用递归会很浪费性能
+    // 上面是之前写的，在写依赖收集的时候改为下面写法
+    let childOb = observe(value);//这里这个value可能是数组，也可能是对象，返回的结果是observer的实例，当前这个value对应的observer
+     /* 步骤四 end*/ 
     Object.defineProperty(data,key,{
         get(){//获取值的时候作一些操作
            //console.log('取值')//每个属性都对应着自己的watcher
            if(Dep.target){//如果当前有watcher
             dep.depend();//意味着我要将watcher存起来
+            /* 步骤四 start*/ 
+             if(childOb){//数组的依赖收集
+                childOb.dep.depend();//收集了数组的相关依赖
 
+                // 如果数组中还有数组
+                if(Array.isArray(value)){
+                    dependArray(value);
+
+                }
+             }
+             /* 步骤四 end*/ 
 
            }
            return value;
@@ -110,6 +126,21 @@ function defineReactive(data,key,value){
     })
 }
 /* 步骤一 end*/ 
+
+
+/* 步骤四 start*/ 
+function dependArray(value){
+  for(let i=0;i<value.length;i++){
+      let current =value[i];//将数组中的每一个都取出来，数据变化后  也去更新视图
+    //   数组中的数组的依赖收集
+      current.__ob__ && current.__ob__.dep.depend();
+      if(Array.isArray(current)){
+          dependArray(current)
+      }
+  }
+}
+/* 步骤四 end*/ 
+
 
 /* 步骤一 start*/  
 
