@@ -1,5 +1,5 @@
 import { pushTarget, popTarget } from './dep.js'
-
+import { queueWatcher} from './schedular'
 let id = 0;//每个watcher都有一个标识
 
 class Watcher {
@@ -29,6 +29,16 @@ class Watcher {
         popTarget();//移除watcher
     }
     update() {
+        // 等待着   一起来更新  因为每次调用update的时候  都放入了watcher
+        //   这个方法是为了解决用户多次调同一个，比如push方法
+        queueWatcher(this)
+        // console.log(this.id);
+
+
+        // this.get();
+    }
+    run() {
+        console.log(55)
         this.get();
     }
 }

@@ -259,13 +259,12 @@
   methods.forEach(function (method) {
     // 在arrayMethods这个属性上增加上面那些方法，调这些方法的时候会传入很多参数
     arrayMethods[method] = function () {
-      //...agrs是{name: "zf", age: 3}
-      console.log('用户调用了方法'); // AOP 切片编程  
-
       for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
         args[_key] = arguments[_key];
       }
 
+      //...agrs是{name: "zf", age: 3}
+      // console.log('用户调用了方法');// AOP 切片编程  
       var result = oldArrayMethods[method].apply(this, args); //调用原生的数组方法,这里的this指的是value,因为是value调用的,这个result返回的是value的length
       // 判断：如果添加的元素可能还是一个对象
 
@@ -445,7 +444,8 @@
     Object.defineProperty(data, key, {
       get: function get() {
         //获取值的时候作一些操作
-        //console.log('取值')//每个属性都对应着自己的watcher
+        console.log('取值'); //每个属性都对应着自己的watcher
+
         if (Dep.target) {
           //如果当前有watcher
           dep.depend(); //意味着我要将watcher存起来
@@ -841,6 +841,52 @@
   }
   */
 
+  var callbacks = [];
+  var waiting = false;
+
+  function flushCallback() {
+    callbacks.forEach(function (cb) {
+      return cb();
+    });
+    waiting = false;
+  }
+
+  function nextTick(cb) {
+    // 多次调用nextTick 如果没有刷新的时候  就先把他放到数组中，
+    // 刷新后  更改waiting
+    callbacks.push(cb);
+
+    if (waiting === false) {
+      setTimeout(flushCallback, 0);
+      waiting = true;
+    }
+  }
+
+  // 专门做调度的一个js
+  var queue = [];
+  var has = {};
+
+  function flusSchedularQueue() {
+    queue.forEach(function (watcher) {
+      return watcher.run();
+    });
+    queue = []; //让下一次可以继续使用
+
+    has = {};
+  }
+
+  function queueWatcher(watcher) {
+    var id = watcher.id;
+
+    if (has[id] == null) {
+      queue.push(watcher);
+      has[id] = true; // 宏任务和微任务（vue里面使用了Vue.nextTick）
+      // Vue.nextTick = promise /mutatuinObserver/setImmediate/setTimeout//优雅降级
+
+      nextTick(flusSchedularQueue);
+    }
+  }
+
   var id$1 = 0; //每个watcher都有一个标识
 
   var Watcher = /*#__PURE__*/function () {
@@ -883,6 +929,15 @@
     }, {
       key: "update",
       value: function update() {
+        // 等待着   一起来更新  因为每次调用update的时候  都放入了watcher
+        //   这个方法是为了解决用户多次调同一个，比如push方法
+        queueWatcher(this); // console.log(this.id);
+        // this.get();
+      }
+    }, {
+      key: "run",
+      value: function run() {
+        console.log(55);
         this.get();
       }
     }]);
@@ -974,6 +1029,8 @@
     var updateComponent = function updateComponent() {
       //无论是渲染还是更像都会调用此方法
       //返回的是虚拟dom
+      console.log('update');
+
       vm._update(vm._render());
     }; // 渲染watcher 每个组件都有一个watcher
 
@@ -1054,7 +1111,10 @@
 
 
       mountComponent(vm, el);
-    };
+    }; //用户调用nextTick
+
+
+    Vue.prototype.$nextTick = nextTick;
   }
 
   function createElement(tag) {

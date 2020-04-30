@@ -15,7 +15,7 @@
 
     <!-- xxx -->
 
-    <div id="app" style="color: red">hello
+    <div id="app" style="color: red">
         {{arr}}
     </div>
 
@@ -96,8 +96,15 @@
         setTimeout(()=>{
 // 希望数据变化，可以自动的重新执行我们的渲染watcher
             // vm.age=1000;
+            vm.arr.push(1)
+            vm.arr.push(2)
+            vm.arr.push(3)
             vm.arr.push(4)
             // vm._update(vm._render())//只是原理，但用户不希望没更改一条数据就手动更改，所有要写依赖收集
+        
+        vm.$nextTick(()=>{
+            console.log(vm.$el.innerHTML);
+        })
         },1000)
     </script> 
 

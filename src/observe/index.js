@@ -94,7 +94,7 @@ function defineReactive(data,key,value){
      /* 步骤四 end*/ 
     Object.defineProperty(data,key,{
         get(){//获取值的时候作一些操作
-           //console.log('取值')//每个属性都对应着自己的watcher
+           console.log('取值')//每个属性都对应着自己的watcher
            if(Dep.target){//如果当前有watcher
             dep.depend();//意味着我要将watcher存起来
             /* 步骤四 start*/ 

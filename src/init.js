@@ -5,6 +5,8 @@ import { mountComponent,callHook } from './lifecycle'
 
 import { mergeOptions } from './util/index'
 
+import {nextTick} from './util/next-tick'
+
 // 在原型上添加一个init方法
 export function initMixin(Vue) {
     Vue.prototype._init = function (options) {
@@ -74,5 +76,7 @@ export function initMixin(Vue) {
 
 
     }
+    //用户调用nextTick
+    Vue.prototype.$nextTick = nextTick
 }
 

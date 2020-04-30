@@ -26,7 +26,7 @@ const methods = [
 methods.forEach(method=>{
     // 在arrayMethods这个属性上增加上面那些方法，调这些方法的时候会传入很多参数
     arrayMethods[method] = function(...args){//...agrs是{name: "zf", age: 3}
-        console.log('用户调用了方法');// AOP 切片编程  
+       // console.log('用户调用了方法');// AOP 切片编程  
         const result = oldArrayMethods[method].apply(this,args);//调用原生的数组方法,这里的this指的是value,因为是value调用的,这个result返回的是value的length
 
 
