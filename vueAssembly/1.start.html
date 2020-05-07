@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="app">
+        {{name}}
+    </div>
+    <!-- vue俩种模式  full  with(带) compiler
+ vue另一种模式 不带compiler 叫 runtime
+     -->
+    <script src="../node_modules/vue/dist/vue.js"></script>
+<script>
+    // 用vm的缩写是因为虽然没有完全遵循mvvm模型，但是受到了启发的启发，所有用vm缩写来表示敬意（在vue 的官方文档中有提到）
+    // 把数据挂载到vm上，就可以直接帮我们渲染到视图中
+
+    // 1.渲染采用模板的顺序
+    // 2.默认会先查找用户传入的render函数
+    // 3.如果没有render 就会查找template
+    // 4.如果没有传入render函数，也没有template模板，会采用el对应的元素进行渲染
+   let vm = new Vue({
+       el:'#app',//渲染哪个节点
+       data(){
+           return { name:'jw'}
+       },
+       template:`<div>hello</div>`,
+    //    如果上面不用vue.js，用vue.rentime.js它就获取不到{{}}这样的模板，必须用render函数
+       render(h){//相当于createElement == _c,它可以帮我们创建一个虚拟节点,this指的是vm
+       return h('h1',{id:'xxx'},this.name)
+
+       }
+
+    })
+</script> 
+
+</body>
+</html>
