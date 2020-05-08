@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <!-- {{}} 这种双括号叫模板语法，会在当前的vue实例上进行取值  _v() -->
+    <!-- 表达式只能存放 有返回值的结果 -->
+    <!-- 可以放 运算  函数执行获取返回值  三元表达式  取值 -->
+    <div id="app">
+        {{name.a}} {{arr}}
+    </div>
+    <script src="../node_modules/vue/dist/vue.js"></script>
+    <script>
+        let vm = new Vue({
+            el: '#app',
+            data() {
+                return {
+                    name: {
+                        n: 'jw'
+                    },
+                    arr: [1, 2, 3]
+
+                }
+            },
+
+
+        })
+        // 响应式原理的缺陷
+        // 1.（对象的情况）不存在的属性 如果新增的话不能渲染视图 因为它是内部会采用defineProperty重新定义属性 getter 和 setter
+        // 解决办法
+        // vm.name={
+        //     ...vm.name,
+        //     a:1
+        // }
+        //或 内部也会触发更新，而且新增的a属性是可以响应式的
+        // vm.$set(vm.name,'a',1)
+        // vm.name.a=100
+        // 数据尽量少嵌套关系，因为如果嵌套关系非常的深，默认会递归所有的对象，给他增加getter和setter属性，所以性能不好
+
+
+        // 2.数组只能通过改变数组的七个方法来实现更新视图，不能使用索引，长度（因为它不监控索引和长度）
+        // 解决办法
+        // vm.arr.push(4,5,6)
+        // 也可以用$set,
+        //vm.$set(vm.arr, 0, 100);//内部会采用splice，数组实现响应式主要是靠重写原型的方法，vm.$delete同$set一样
+    
+    // 但是vue2.0这样写很麻烦，所以vue3.0使用了 proxy 来实现代理，就解决了以上的所有问题，不需要一上来就进行递归（性能能好，但兼任性差）
+    
+    </script>
+
+</body>
+
+</html>

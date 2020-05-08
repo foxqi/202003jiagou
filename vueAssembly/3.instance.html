@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <div id="app">
+        {{name}}
+    </div>
+    <script src="../node_modules/vue/dist/vue.js"></script>
+    <script>
+        let vm = new Vue({
+            el: '#app',
+            data() {
+                return {
+                    name: 'jw',
+                    arr: [1, 2, 3]
+
+                }
+            },
+
+
+        })
+
+        // 实例上有很多方法
+        // vm.$mount  内部会判读用户是否传入el属性，如果没有，则用vm.$mount('#app')进行挂载操作
+        vm.$mount('#app');//因为有可能有些组件我不希望不挂载到app的节点上，可以通过这个方式挂载到其他的元素上
+        // 它可以自定义挂载点  弹框组件
+
+        // vm.$options  用户传入的所有属性
+        // vm.$data == vm._data  true 代表响应后的数据（下划线一般代表私有的，所有提供了一个$data的公有属性）
+        // vm.$nextTick  保证页面渲染完毕后获取最新的dom元素
+        // vm.$el  代表当前渲染的元素，因为渲染是异步的，它是引用类型（整个页面走完之后，它已经改变了值，它打印的结果是xxx,所有它一般和vm.$nextTick一起使用
+
+        // 异步渲染 queueWatcher 会把属性 对应的watcher存起来
+        // vm.$watch()  默认我们有渲染watcher ，还有可以自定义的watch
+        vm.$match('name',(newValue,oldValue)=>{
+            console.log(newValue);
+            
+        })
+        
+
+        // 属于方法类的
+        // $watch $nextTick  $mount
+
+        // 属于属性类的
+        // vm.$data vm.$el  vm.$options
+
+    
+    </script>
+
+</body>
+
+</html>

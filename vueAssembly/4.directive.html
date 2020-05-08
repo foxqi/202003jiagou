@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+<!-- 常用指令，指令对应的值都是变量 -->
+    <div id="app">
+        <!-- 这个标签是个静态节点，稍后渲染时，不会重新的渲染了，有缓存了 -->
+        <div v-once>{{name}}</div>
+
+        <!-- 它相当于 innerHTML（innerHTML会转换成标签插入）对导致 xss攻击 
+        如果一个input里放入 <img src="xxx" onerror="alert(111)">。如果input是使用的v-html那么alert(111)就会被弹出，可能会不好的人攻击。如果是后台传入的是html可以考虑
+
+        所有这里需要对内容严格把控，不要信任用户输入的内容
+        -->
+        <div v-html="html"></div>
+
+
+        <!-- v-if/ v-else / v-else-if 它等价于三元表达式
+        它最终会被编译成  render函数(具体实现在G:\202003jiaogou3\vueAssembly\1.test.js)
+        如果条件不满足这个节点就不渲染，操作的是dom元素
+        v-if可以配合template一起使用
+        
+        -->
+
+        <!-- template没有任何意义的标签,它可以代替div等dom，减少dom渲染 -->
+        <template></template>
+
+
+        <!-- v-show 最终会通过样式来控制这个div是显示还是隐藏 display:none
+        为什么不用opacity或visibilty:hidden呢
+        ，因为display是不占位置的
+        -->
+        <div v-show="false">hello</div>
+
+
+        <!-- v-for  循环 循环字符串  数组 数字  对象 -->
+
+        <!-- (每一项，索引) -->
+        
+        <div v-for="(a,index) of arr" ::key="index"></div>
+         <!-- 1.如果使用v-for  就不能和v-if连用
+        v-for和v-if 的优先级问题
+        它是先循环再判断，性能不好，
+        尽量使用计算属性来解决这个问题
+        
+        -->
+        <!-- 2.key的问题 尽量不要使用索引作为key (尤其是经常操作的列表) 
+        因为如果用索引的话，如果相同的索引但是发现元素内容发生变化，会直接重新渲染，比如下面的苹果和香蕉的各自的li会渲染俩次。但是我们想如果相同的dom结构，尽量不要重新渲染，索引用索引不好
+        
+        
+        -->
+        <li :key="0">苹果</li>
+        <li :key="1">橘子</li>
+        <li :key="2">香蕉</li>
+
+        <li :key="0">香蕉</li>
+        <li :key="1">橘子</li>
+        <li :key="2">苹果</li>
+<!-- 但如果使用唯一的key标识，它是会找到进行比对，如果不同，会进行移动，而不是删除在添加.有key的话不会去重新创建dom -->
+        <li :key="p">苹果</li>
+        <li :key="j">橘子</li>
+        <li :key="x">香蕉</li>
+
+        <li :key="x">香蕉</li>
+        <li :key="j">橘子</li>
+        <li :key="p">苹果</li>
+
+    </div>
+    <script src="../node_modules/vue/dist/vue.js"></script>
+    <script>
+        let vm = new Vue({
+            el: '#app',
+            data() {
+                return {
+                    name: 'jw',
+                    arr: [1, 2, 3],
+                    html:'<h1>hello</h1>'
+
+                }
+            },
+
+           
+
+
+        })
+
+
+    
+    </script>
+
+</body>
+
+</html>
