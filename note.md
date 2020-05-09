@@ -139,7 +139,26 @@
         <li :key="p">苹果</li>
 ```
 
-
+#### 5.自定义指令(vueAssembly/5.directive.html)
+ - directives
+ ```javasctipt
+    // 一个指令里面的生命周期
+    // bind(el,bindings,vnode,oldVnode){
+    //     console.log(el.parentNode);
+    // },
+    // inserted(el,bindings,vnode,oldVnode){
+    //     console.log(el.parentNode);
+    // },
+    // update(el,bindings,vnode,oldVnode){
+    //     console.log(el.innerHTML);
+    // },
+    // componentUpdated(el,bindings,vnode,oldVnode){
+    //     console.log(el.innerHTML);
+    // },
+    // unbind(){
+    //     // 解除事件绑定
+    // }
+ ```
 
 
 

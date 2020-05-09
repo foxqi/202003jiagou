@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <!-- 自定义指令 -->
+    <!-- 指令的目的就是dom操作 -->
+    <div id="app">
+        <div v-click-outside="blur">
+            {{my}}
+            <input type="text" @focus="focus">
+            <div v-show="visible">面板 <button>点我呀</button></div>
+        </div>
+
+    </div>
+    <script src="../node_modules/vue/dist/vue.js"></script>
+    <script>
+        let vm = new Vue({
+            el: '#app',
+            directives: {
+                clickOutside: {//函数写bind+update
+                    bind(el,bindings,vnode,oldVnode){
+                        el.handler=(e)=>{
+
+                            if(!el.contains(e.target)){
+                                // console.log(bindings)
+                                let method =bindings.expression
+                                vnode.context[method]()
+                            }
+                        }
+                        document.addEventListener('click',el.handler)
+
+                    },
+                    unbind(el){
+                        document.removeEventListener('click',el.handler)
+                    }
+
+                    // 一个指令里面的生命周期
+                    // bind(el,bindings,vnode,oldVnode){
+                    //     console.log(el.parentNode);
+                    // },
+                    // inserted(el,bindings,vnode,oldVnode){
+                    //     console.log(el.parentNode);
+                    // },
+                    // update(el,bindings,vnode,oldVnode){
+                    //     console.log(el.innerHTML);
+                    // },
+                    // componentUpdated(el,bindings,vnode,oldVnode){
+                    //     console.log(el.innerHTML);
+                    // },
+                    // unbind(){
+                    //     // 解除事件绑定
+                    // }
+
+                }
+            },
+            data() {
+                return {
+                    // focus(){
+                    //     console.log(this);//window
+                    // }
+                    visible: false,
+                    my: 'ok'
+
+                }
+            },
+            //如果在date里面写方法，那么this指的是window。而我们想指的是当前实例，就要用methods
+            methods: {//内部会绑定this，永远指的都是当前实例
+                focus() {
+                    // console.log(this);//指的是当前实例
+                    // this.a.call(100);
+                    this.visible = true;
+                },
+                // a(){
+                //     console.log(this);//vm
+                // }
+                blur() {
+                    this.visible = false;
+                }
+            }
+
+        })
+        vm.my = 'no ok'
+
+
+    </script>
+
+</body>
+
+</html>
