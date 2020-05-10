@@ -1,0 +1,26 @@
+{
+  "name": "202003jiaogou3",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "axios": "^0.19.2",
+    "express": "^4.17.1",
+    "vue": "^2.6.11",
+    "vue-lazyload": "^1.3.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/foxqi/202003jiagou.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/foxqi/202003jiagou/issues"
+  },
+  "homepage": "https://github.com/foxqi/202003jiagou#readme"
+}

@@ -160,6 +160,8 @@
     // }
  ```
 
+ #### 6. 图片懒加载 vue-lazyLoad 第三方插件 (vueAssembly/index.html)
+
 
 
 
