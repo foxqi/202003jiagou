@@ -37,29 +37,24 @@ export default {
 <style lang="stylus">
 .edit {
   .edit-list {
-    padding 10px;
-    background #ccc
+    padding: 10px;
     button {
-        height 40px
-        width 80px
-        margin 5px
+      height: 40px;
+      width: 80px;
+      margin: 5px;
     }
+    background #ccc
   }
-  .edit-box{
-      position absolute;
-      top 60px
-      bottom 0
-      left 0
-      right 0
+
+  .edit-box {
+      height: 100%;
       textarea{
-         border none 
-         outline none 
-         width 50% 
-         height 100%
-         font-size 24px
+          border none;
+          outline none;
+          width 100%;
+          height:100%;
+          font-size:24px;
       }
   }
 }
-
-
 </style>

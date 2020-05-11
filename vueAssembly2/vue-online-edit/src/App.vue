@@ -32,19 +32,23 @@ export default {
 </script>
 
 <style lang="stylus">
-*{
-  margin 0 ;
-  padding  0 ;
+* {
+  margin: 0;
+  padding: 0;
 }
-html,body,#app{
-  width:100%;
-  height :100%;
+
+html, body, #app {
+  width: 100%;
+  height: 100%;
 }
-#app{
-  display flex
-  &>div{
-    width 50%
-    height 100%
+
+#app {
+  display: flex;
+
+  & > div {
+    width: 50%;
+    height: 100%;
   }
 }
 </style>
+
