@@ -30,11 +30,13 @@
     </div>
 
 </body>
-<script src="node_modules/vue/dist/vue.js"></script>
-<script src="node_modules/vue-lazyload/vue-lazyload.js"></script>
-<script src="node_modules/axios/dist/axios.js"></script>
+<script src="./node_modules/vue/dist/vue.js"></script>
+<!-- <script src="./node_modules/vue-lazyload/vue-lazyload.js"></script> -->
+<!-- 自写vue-lazyload -->
+<script src="./vue-lazyload.js"></script> 
+<script src="./node_modules/axios/dist/axios.js"></script>
 <script>
-    const loading = 'http://localhost:3000/images/1.gif'
+    const loading = 'http://localhost:8000/images/1.gif'
     Vue.use(VueLazyload, {
         preLoad: 1.3,//默认窗口的1.3倍
         loading
@@ -45,7 +47,7 @@
             imgs: []
         },
         created() {
-            axios.get('http://localhost:3000/api/img').then(res => (
+            axios.get('http://localhost:8000/api/img').then(res => (
                 //    console.log(res)
                 this.imgs = res.data
             ))

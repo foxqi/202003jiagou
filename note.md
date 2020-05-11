@@ -161,11 +161,63 @@
  ```
 
  #### 6. 图片懒加载 vue-lazyLoad 第三方插件 (vueAssembly/index.html)
+    - ***自写 方法
 
 
+### 小测
+1. 关于框架和库的说法正确的是：框架则是为解决一类问题而开发的产品，库是将代码集合成一个产品 
+2. 关于MVC 和 MVVM说法正确的是： 前端既存在MVC框架也存在MVVM框架
+3. 关于render和template属性说法正确的是：render函数的优先级高于template
+4. 响应式原理说法正确的是：Vue的响应式原理：对象通过defineProperty来实现，数组通过重写数组原型方法来实现
+5. v-if和v-show的区别 :v-if操作的是dom是否存在，最终会编译成三元表达式
+6. 关于v-for说法正确的是?  如果是静态展示的属性可以使用索引作为key
+7. 关于v-model说法正确的是？v-model可以理解成是语法糖形式  
 
 
+## 进阶vue篇（二）
 
+#### 组件化开发：可复用、方便维护、减少不必要的更新操作
+
+#### 一、vue-cli项目创建
+#### 1.安装
+```javascript
+npm install -g @vue/cli(这里的@是指作用域包，这里是指vue包，发包的一个规范)
+npm install -g @vue/cli-service-global(快速创建项目工具)
+vue create vue-online-edit（后面这个是项目名字）
+```
+#### 2.初始化
+```javascript
+? Check the features needed for your project:
+ (*) Babel
+ ( ) TypeScript
+ ( ) Progressive Web App (PWA) Support
+ ( ) Router
+ ( ) Vuex
+>(*) CSS Pre-processors
+ ( ) Linter / Formatter
+ ( ) Unit Testing
+ ( ) E2E Testing
+
+
+? Pick a CSS pre-processor (PostCSS, Autoprefixer and CSS Modules are supported by default)
+  Sass/SCSS (with dart-sass)
+  Sass/SCSS (with node-sass)
+  Less
+> Stylus
+```
+
+`
+cd vue-online-edit  &  yarn serve
+`
+#### 二.Vue组件通信
+#### 1.常见组件通信方式
+- 1)props和$emit 父组件向子组件传递数据是通过prop传递的，子组件传递数据给父组件是通过$emit触发事件来做到的
+- 2.$attrs和$listeners A->B->C。Vue 2.4 开始提供了$attrs和$listeners来解决这个问题
+- 3.$parent,$children
+- 4.$refs 获取实例
+- 5.父组件中通过provider来提供变量，然后在子组件中通过inject来注入变量。
+- 6.envetBus 平级组件数据传递 这种情况下可以使用中央事件总线的方式
+- 7.vuex状态管理
 
 
 
