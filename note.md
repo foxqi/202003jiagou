@@ -182,7 +182,7 @@
 #### 1.安装
 ```javascript
 npm install -g @vue/cli(这里的@是指作用域包，这里是指vue包，发包的一个规范)
-npm install -g @vue/cli-service-global(快速创建项目工具)
+npm install -g @vue/cli-service-global(快速创建项目工具,默认可以采用vue-cli的目录)
 vue create vue-online-edit（后面这个是项目名字）
 ```
 #### 2.初始化
@@ -209,13 +209,15 @@ vue create vue-online-edit（后面这个是项目名字）
 `
 cd vue-online-edit  &  yarn serve
 `
+
+
 #### 二.Vue组件通信
 #### 1.常见组件通信方式
 - 1)props和$emit 父组件向子组件传递数据是通过prop传递的，子组件传递数据给父组件是通过$emit触发事件来做到的
 - 2.$attrs和$listeners A->B->C。Vue 2.4 开始提供了$attrs和$listeners来解决这个问题
 - 3.$parent,$children
 - 4.$refs 获取实例
-- 5.父组件中通过provider来提供变量，然后在子组件中通过inject来注入变量。
+- 5.父组件中通过provider来提供变量，然后在子组件中通过inject来注入变量。跨组件使用
 - 6.envetBus 平级组件数据传递 这种情况下可以使用中央事件总线的方式
 - 7.vuex状态管理
 
