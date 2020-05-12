@@ -221,7 +221,9 @@ cd vue-online-edit  &  yarn serve
 - 6.envetBus 平级组件数据传递 这种情况下可以使用中央事件总线的方式
 - 7.vuex状态管理
 
+#### 三.Vue的表单结构（内含组件间的通信方式）（vueAssembly2/vue-form）
 
+## vueRouter封装（./vue-router）
 
 
 

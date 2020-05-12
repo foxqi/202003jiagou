@@ -22,6 +22,9 @@ export default {
         },
     },
     methods:{
+        resetFields(){
+        //   .async  v-mode  找到输入框清理
+        },
          async validate(cb){
             // 需要看一下内部的elformItem 是否都通过了校验
             // 获取所有的子组件
