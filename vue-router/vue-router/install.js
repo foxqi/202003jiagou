@@ -19,6 +19,10 @@ const install = function (_Vue) {
                 // 根
                 this._routerRoot = this;//就是将当前根实例放到了_routerRoot
                 this._router = this.$options.router;
+
+
+               // 当前用户的router属性
+                this._router.init(this);//调用插件中的init方法
             } else {
                 // 儿子
                 this._routerRoot = this.$parent && this.$parent._routerRoot;

@@ -6,6 +6,7 @@ import About from '../views/about.vue';
 
 // use 方法会调用install方法，会注册全局组件  router-link  router-view
 
+
 let routes = [
     {
         path: '/',
