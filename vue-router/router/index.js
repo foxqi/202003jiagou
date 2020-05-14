@@ -35,6 +35,7 @@ Vue.use(VueRouter)//2.能使用use,说明它包含install方法
 
 // 3.当可以new VueRouter这个类的时候，它里面传了一个参数，这个参数是routes
 export default new VueRouter({
+    mode:'hash',
     routes
 })
 

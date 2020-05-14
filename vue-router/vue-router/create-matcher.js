@@ -7,6 +7,9 @@ export default function createMatcher(routes){
 // pathMap {/:{},/about:{},/about/a:{}}
    let {pathList,pathMap} = createRouteMap(routes)
 
+   console.log(pathList,pathMap);
+   
+
    function match(){//等会要通过用户输入的路径  获取对应的匹配记录
 
    }
