@@ -23,6 +23,9 @@ class VueRouter{
 
 
     }
+    match(loction){
+      return this.matcher.match(location);
+    }
     init(app){//目前这个app指代的就是最外层new Vue
       //需要用户的配置  做出一个映射表来 
       
