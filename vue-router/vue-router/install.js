@@ -28,7 +28,7 @@ const install = function (_Vue) {
                 this._routerRoot = this.$parent && this.$parent._routerRoot;
             }
             // 现在这里所有的组件都拥有了 this._routerRoot属性
-            console.log(this._routerRoot._router);
+            // console.log(this._routerRoot._router);
             
 
         },

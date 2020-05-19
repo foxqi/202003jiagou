@@ -11,7 +11,6 @@ const ensureSlash=()=>{
 export default class HashHistory extends History{
     constructor(router){
         super(router);
-        console.log('hash');
         this.router = router;
         // 如果使用hashHistory  默认如果没有hash  应该跳转到  首页 #/
 
@@ -25,8 +24,6 @@ export default class HashHistory extends History{
         window.addEventListener('hashchange',()=>{
             // 再次执行匹配操作
             this.transitionTo(this.getCurrentLocation())
-           console.log('hash变化');
-            
         })
     }
 }
