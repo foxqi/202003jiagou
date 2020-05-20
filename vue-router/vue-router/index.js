@@ -20,6 +20,7 @@ class VueRouter{
           break;
 
       }
+      this.beforeHooks=[];
     }
     match(location){
       return this.matcher.match(location);
@@ -51,6 +52,14 @@ class VueRouter{
       // transitionTo 跳转逻辑 hash、 browser都有
       // getCurrentLocation  hash和browser实现不一样
       // setupListener hash监听
+    }
+    push(location){
+      const history = this.history;
+      window.location.hash=location;
+    }
+    beforeEach(fn){
+      this.beforeHooks.push(fn);
+
     }
 }
 

@@ -34,9 +34,24 @@ let routes = [
 Vue.use(VueRouter)//2.能使用use,说明它包含install方法
 
 // 3.当可以new VueRouter这个类的时候，它里面传了一个参数，这个参数是routes
-export default new VueRouter({
-    mode:'hash',
+let router = new VueRouter({
+    mode: 'hash',
     routes
 })
+// 4.切换提示
+console.log(router);
 
+router.beforeEach((to, from, next) => {
+    setTimeout(() => {
+        console.log('1.beforeEacht');
+        next();
+    }, 1000)
+})
+router.beforeEach((to, from, next) => {
+    setTimeout(() => {
+        console.log('2.beforeEacht');
+        next();
+    }, 2000)
+})
+export default router
 
