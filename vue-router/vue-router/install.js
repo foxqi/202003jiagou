@@ -23,16 +23,30 @@ const install = function (_Vue) {
 
                // 当前用户的router属性
                 this._router.init(this);//调用插件中的init方法
+           
+                // 如果用户更改了  current  是没有效果的  需要把_route也进行更新
+                Vue.util.defineReactive(this,'_route',this._router.history.current)
+
             } else {
                 // 儿子
                 this._routerRoot = this.$parent && this.$parent._routerRoot;
             }
             // 现在这里所有的组件都拥有了 this._routerRoot属性
-            // console.log(this._routerRoot._router);
+            //this._routerRoot是根
             
-
+            
         },
     });
+    Object.defineProperty(Vue.prototype,'$route',{//存放的都是属性  path,matched
+        get(){
+            return this._routerRoot && this._routerRoot._route;//取current
+        }
+    })
+    Object.defineProperty(Vue.prototype,'$router',{//存放的都是属性  path,matched
+        get(){
+            return this._routerRoot && this._routerRoot._router;//取current
+        }
+    })
 }
 export default install;
 

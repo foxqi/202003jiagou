@@ -11,7 +11,12 @@
 
 <script>
 export default {
-   name:'App'
+   name:'App',
+   mounted(){
+     console.log(this.$route);
+     console.log(this.$router);
+     
+   }
 }
 </script>
 
