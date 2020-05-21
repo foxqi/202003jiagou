@@ -45,7 +45,7 @@ class VueRouter{
 
 // 只要current发生变化 就触发此函数
         app._route=route;//更新视图的操作，当current变化后再次更新 _route属性
-        console.log(app._route);
+        // console.log(app._route);
       });
 
       // 初始化时 都需要调用更新_route的方法

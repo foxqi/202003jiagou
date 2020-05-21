@@ -11,6 +11,7 @@ const install = function (_Vue) {
     //用户将router属性 注册到了new Vue
     // 希望每个子组件都可以获取到 router属性
     Vue.mixin({
+        //给所有组件的生命周期都增加beforeCreate方法
         beforeCreate() {//mixin 可以给beforeCreate 这个生命周期增加合并的方法
 
             // 如果有router 说明你在根实例上增加了router属性，当前这个实例是根实例，

@@ -225,6 +225,43 @@ cd vue-online-edit  &  yarn serve
 
 ## vueRouter封装（./vue-router）
 
+#### 一、文件关系
+- compinents 存放vue-router的俩个核心组件
+- history 存放浏览器跳转相关逻辑
+- create-matcher.js 创建匹配器
+- create-route-map.js 创建路由映射表
+- index.js 引用时的入口文件
+- install.js install方法
+
+
+#### 1.当使用vueRouter的时候使用的是index.js文件（在router/index.js中引入的就是自己写的vue-router/index.js，里面的use方法是默认会调用当前返回对象的install方法）
+
+#### 2.因为index.js中放入太多，所以提取出 install.js 单独作为一个文件。
+- 这个install文件 内部一般会用他来定义一些全局的内容 指令  全局组件 给原型扩展方法
+- Vue.mixin 方法   给所有组件的生命周期都增加beforeCreate方法
+- beforeCreate方法中判断是否有router属性，如果有，说明是根实例，并将根实例挂载到_routerRoot属性上，把当前router实例挂载在_router上； 如果没有，将父组件渲染后会渲染子组件，保证所有子组件都拥有_routerRoot属性，指向根实例。保证所有组件可以通过this._routerRoot._router 拿到用户传递进来的路由实例对象
+
+
+#### 3.index.js中在Vue-Router上增加一个init方法，主要目的是初始化功能
+
+#### 4.index.js中在VueRouter类中开始写路由（匹配到对应路径显示对应的组件）
+- 根据用户传递的routes创建匹配关系，this.matcher需要提供俩个方法： match 用来匹配规则；
+addRoutes 用来动态添加路由
+
+#### 5.编写createMatcher方法（在create-matcher.js文件里）
+- 收集所有的路由路径，收集路径的对应渲染关系
+- addRoutes 动态加载路由的方法，将新增的路由追加到pathList和pathMap中，在这个方法中需要添加createRouteMap方法，创建映射关系
+
+#### 6.编写createRouteMap方法（在create-route-map.js文件里）
+- 编写addRouteRecord这个方法，将当前路由存储到pathList和pathMap中，在里面判断，是否是子路由，如果是需要增加前缀，获取record提取需要的信息；  判断pathMap对象有没有path属性，如果没有在pathList数组里添加path属性，并将record属性赋值给pathMap[path];   递归添加子路由，每一个route.children子路由，再次递归调用addRouteRecord来添加子路由
+- addRouteRecord 这个方法是处理路径和不同路径对应的记录
+
+#### 7.编写浏览器历史相关代码
+
+
+
+
+
 
 
 

@@ -39,17 +39,17 @@ let router = new VueRouter({
     routes
 })
 // 4.切换提示
-console.log(router);
+// console.log(router);
 
 router.beforeEach((to, from, next) => {
     setTimeout(() => {
-        console.log('1.beforeEacht');
+        // console.log('1.beforeEacht');
         next();
     }, 1000)
 })
 router.beforeEach((to, from, next) => {
     setTimeout(() => {
-        console.log('2.beforeEacht');
+        // console.log('2.beforeEacht');
         next();
     }, 2000)
 })
