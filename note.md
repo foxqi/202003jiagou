@@ -245,8 +245,8 @@ cd vue-online-edit  &  yarn serve
 #### 3.index.js中在Vue-Router上增加一个init方法，主要目的是初始化功能
 
 #### 4.index.js中在VueRouter类中开始写路由（匹配到对应路径显示对应的组件）
-- 根据用户传递的routes创建匹配关系，this.matcher需要提供俩个方法： match 用来匹配规则；
-addRoutes 用来动态添加路由
+- 根据用户传递的routes创建匹配关系，this.matcher需要提供俩个方法：1. match 用来匹配规则；
+2.addRoutes 用来动态添加路由
 
 #### 5.编写createMatcher方法（在create-matcher.js文件里）
 - 收集所有的路由路径，收集路径的对应渲染关系
@@ -257,6 +257,23 @@ addRoutes 用来动态添加路由
 - addRouteRecord 这个方法是处理路径和不同路径对应的记录
 
 #### 7.编写浏览器历史相关代码
+- vue路由有三种模式  hash/h5api/abstrat，为了保证嗲用时方法一致。我们需要提供一个base类，在分别实现子类，不同模式下通过父类调用对应子类的方法
+- 再index.js分开写一个专门编写浏览器历史的相关代码的history/hashHistory.js, 这里我们以 hash 路由为主，
+- 1.创建 hash 路由实例 2.如果是hash路由，打开网站如果没有hash默认应该添加 #/ 3.在init初始化里，先拿到当前路劲，进行匹配逻辑  4. 让路由系统过渡到某个路劲
+- setupListener  监听路径变化；  
+  - 根据当前hash值，过渡到对应路径
+- getCurrentLocation 子类获取对应的路径；  
+  - 获取到#后面的路由
+- transitionTo  父类提供方法负责跳转；
+  - createRoute方法是获取到路径的，如{path:'/',matched:[record,record]},如果有record记录，就将当前记录的父亲放到前面
+  - 去匹配路径用match方法（是调用create-matcher.js的match方法获取路由：根据location用户传入的路径找到对应的记录，根据记录创建对应的路由，找不到则返回空匹配），相同的路径不必过渡，用updateRoute方法（这个方法和当路由发生变化不是一个方法，它只是更新current属性，而下面还需要更新_route属性）更新路由，将输入的路由（location）转变为最新的current路径
+
+- setupHashListener 跳转成功后注册路径监听，为视图更新做准备
+- 路径发生变化时都会更改 current 属性，所有可以把current属性变成响应式的，每次current变化刷新视图即可。变成响应式的就用到了Object.defineProperty,指获取用get方法，不用set设置即可,而是通过Vue.util.defineReactive更新，这个方法是vue中响应式数据变化的核心
+- 当路径变化时需要执行此回调更新 _route 属性 ，在init方法中增加监听函数
+  - listen :注册函数;  
+    - 将用户传来的函数重新放到回调函数中，
+  - updateRoute:更新current，更新_route属性
 
 
 
