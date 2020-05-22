@@ -14,6 +14,17 @@ export default{
     },
 
     render(h,context){
+        // console.log(context) 是下面的参数
+        // $slots: {default: Array(1)}
+        // children: [VNode]
+        // data: {attrs: {…}}
+        // injections: undefined
+        // listeners: {}
+        // parent: VueComponent {_uid: 1, _isVue: true, $options: {…}, _renderProxy: Proxy, _self: VueComponent, …}
+        // props: {to: "/", tag: "p"}
+        // scopedSlots: (...)
+        // slots: ƒ ()
+        // _c: ƒ (a, b, c, d)
         let tag = context.tag||'a';
         const clickHandler=()=>{//指定跳转方法
             context.parent.$router.push(context.props.to);//调用$router中的push方法进行跳转 

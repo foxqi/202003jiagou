@@ -275,8 +275,15 @@ cd vue-online-edit  &  yarn serve
     - 将用户传来的函数重新放到回调函数中，
   - updateRoute:更新current，更新_route属性
 
+#### 8.编写Router-Link 及 Router-View组件
+- 获取到tag，并触发在context.parent绑定$router的路由链接
+- 根据matched(也就是current渲染页面) 渲染对应的router-view
 
-
+#### 9.beforeEach实现（现在是异步工作的，并且携带一个 next 函数作为其第三个参数）
+- 将fn注册到heforeHooks队列中
+- 将用户函数注册到数组中
+  - 迭代queue,把注册函数通过 iterator将本次迭代到hook  传递给iterator函数中，将下次的权限也一并传入
+  - runQueue依次执行队列，执行完毕后更新路由
 
 
 
