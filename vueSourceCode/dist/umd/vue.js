@@ -213,7 +213,7 @@
    * @param {*} child 
    */
 
-  function mergeOptions(parent, child) {
+  function mergeOptions$1(parent, child) {
     var options = {};
 
     for (var key in parent) {
@@ -1058,7 +1058,7 @@
       // 下面这个是合并多个方法才开始写成这样的
       // 将用户传递的  和  全局的进行一个合并
 
-      vm.$options = mergeOptions(vm.constructor.options, options);
+      vm.$options = mergeOptions$1(vm.constructor.options, options);
       callHook(vm, 'beforeCreate'); // 初始化状态
 
       initState(vm); //分割代码（这里面有1.数据劫持）
@@ -1188,10 +1188,7 @@
     };
   }
 
-  function initGlobalAPI(Vue) {
-    //整合了所有的全局相关的内容
-    Vue.options = {};
-
+  function initMixin$1(Vue) {
     Vue.mixin = function (mixin) {
       // 如何实现俩个对象的合并
       this.options = mergeOptions(this.options, mixin);
@@ -1210,6 +1207,31 @@
     // })
     // console.log(Vue.options)
 
+  }
+
+  var ASSETS_TYPE = ['component', 'directive', 'filter'];
+
+  function initAssetRegisters(Vue) {
+    ASSETS_TYPE.forEach(function (type) {
+      Vue[type] = function (id, definition) {
+
+        this.options[type + 's'][id] = definition;
+      };
+    });
+  }
+
+  console.log(ASSETS_TYPE);
+  function initGlobalAPI(Vue) {
+    //整合了所有的全局相关的内容
+    Vue.options = {};
+    initMixin$1(Vue); // 初始化的全局过滤器 指令 组件
+
+    ASSETS_TYPE.forEach(function (type) {
+      Vue.options[type + 's'] = {}; //
+    });
+    Vue.options._base = Vue; //_base 是Vue的构造函数
+
+    initAssetRegisters(Vue);
   }
 
   // 自写vue的核心代码,只是vue的一个声明
