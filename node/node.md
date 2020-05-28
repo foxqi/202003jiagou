@@ -44,3 +44,55 @@ console.log(isString('123'));
 - 发布订阅模式  主要分成两个部分  on  emit
 - on 就是把一些函数维护到一个数组中
 - emit 就是让数组中的方法依次执行
+```javascript
+// 观察者模式  有观察者  肯定有被观察者  观察者需要放到被观察者中，被观察者的状态发生变化需要通知观察者，我变化了
+
+// 内部也基于发布订阅模式，  收集观察者  状态变化后要通知观察者
+
+class Subject{//被观察者  小宝宝
+    constructor(name){
+        this.name=name;
+        this.state ='开心的';
+        this.observers =[];
+    }
+    attach(o){
+        this.observers.push(o);
+    }
+    setState(newState){
+        this.state=newState;
+        this.observers.forEach(o=>o.update(this))
+    }
+}
+
+class Observer{//观察者  我  我媳妇
+    constructor(name){
+        this.name = name
+    }
+    update(baby){
+        console.log('当前'+this.name+'被通知了','当前宝宝的状态是'+baby.state);    
+    }
+}
+
+// 我和我媳妇  需要观察小宝宝的心里状态的变化
+let baby = new Subject('小宝宝');
+let parent = new Observer('爸爸');
+let mother = new Observer('妈妈');
+baby.attach(parent)
+baby.attach(mother)
+baby.setState('被欺负了')
+```
+#### 5.promise
+- https://promisesaplus.com/ 这个网址有   promiseA+ 规范，都是通过这个规范来实现的
+- promise  es6 内部已经实现了。ie不支持promise，需要polyfill  es6-promise
+
+- promise 为什么会产生  解决异步问题
+  - 1.解决多个异步请求并发  （希望同步最终的结果） Promise.all
+  - 2.链式异步请求的问题，上一个人的输出是下一个人的输入  Promise的链式调用可以解决这个问题
+  - 3.缺陷：还是基于回调的
+- promise的特点 ：promise就是一个类
+- 1.promise 有三个状态：成功态（resolve）  失败态（reject） 等待态（pending又不成功又不失败）
+- 2.用户自己决定失败的原因和成功的原因 ，成功和失败也是用户定义的
+- 3.promise默认执行器时立即执行
+- 4.promise的实例都拥有一个then方法，一个参数是成功的回调，另一个是失败的回调
+- 5.如果执行函数时发生了异常也会执行失败逻辑
+- 6.如果promise一旦成功就不能失败，反过来也是一样的

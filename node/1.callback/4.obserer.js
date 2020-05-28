@@ -13,7 +13,7 @@ class Subject{//被观察者  小宝宝
     }
     setState(newState){
         this.state=newState;
-        this.observers.forEach(o=>o.update())
+        this.observers.forEach(o=>o.update(this))
     }
 }
 
@@ -21,11 +21,16 @@ class Observer{//观察者  我  我媳妇
     constructor(name){
         this.name = name
     }
+    update(baby){
+        console.log('当前'+this.name+'被通知了','当前宝宝的状态是'+baby.state);    
+    }
 }
 
 // 我和我媳妇  需要观察小宝宝的心里状态的变化
 let baby = new Subject('小宝宝');
 let parent = new Observer('爸爸');
 let mother = new Observer('妈妈');
-
+baby.attach(parent)
+baby.attach(mother)
+baby.setState('被欺负了')
 
