@@ -42,6 +42,7 @@ promise.then((data)=>{
     
 })
 
+// promise连续调用如何执行代码
 
 
 

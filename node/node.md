@@ -102,3 +102,12 @@ baby.setState('被欺负了')
 // 2.如果返回的是普通值的话（传递到下一次的成功中，不是错误不是promise就是普通值），出错的情况（一定会走到下一次的失败），可能还要promise的情况（会采用promise的状态，决定走下一次的成功还是失败）
 // 3.错误处理  如果离自己最近的then  没有错误处理  会向下找
 // 4.每次执行完promise.then方法返回的都是一个“新的promise”（promise一旦成功或失败就不能修改状态）
+
+// Promise.resolve();//快速创建一个成功的promise
+// Promise.reject();//快速的创建一个失败的promise
+// 区别在于resolve会等待里面的promise执行完毕  reject  不会有等待效果(Promise.reject() 已经报错了 就直接走到catch了)
+
+// finally表示不是最终的意思，而是无论如何都会执行的意思
+// 如果返回一个promise 会等待这个promise  也执行完毕  （如果是失败的promise  会用他的失败原因传给下一个人）
+
+//all 全部成功才成功

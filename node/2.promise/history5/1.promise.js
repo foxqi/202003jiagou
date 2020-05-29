@@ -1,3 +1,5 @@
+// 返回的不是普通值，并且里面调用的不是普通值
+
 let Promise= require('./promise')
 
 let p=new Promise((resolve,reject)=>{

@@ -49,9 +49,6 @@ class Promise {
         this.onResolvedCallbacks = [];//专门用来存放成功的回调
         this.onRejectedCallbacks = [];//专门用来存放失败的回调
         let resolve = (value) => {//调用此方法就是成功
-            if(value instanceof Promise){
-                return value.then(resolve,reject);//递归解析resolve中的参数，直到这个值是普通值
-            }
             if (this.status === PENDING) {
                 this.value = value;
                 this.status = RESOLVED;
@@ -59,7 +56,7 @@ class Promise {
             }
         }
         let reject = (reason) => {
-            if (this.status === PENDING) {             
+            if (this.status === PENDING) {
                 this.reason = reason;
                 this.status = REJECTED;
                 this.onRejectedCallbacks.forEach(fn => fn())
@@ -125,25 +122,11 @@ class Promise {
         });
         return promise2;
     }
-    // 增加catch方法
-    catch(errCallback){
-        return this.then(null,errCallback)
-    }
-    static resolve(data){
-        return new Promise((resolve,reject)=>{
-            resolve(data)
-        })
-    }
-    static reject(reason){
-        return new Promise((resolve,reject)=>{   
-            reject(reason)
-        })
-    }
 }
 
 
 // 测试自己写的promise好不好
-// promise的延迟对象
+// 7.promise的延迟对象
 Promise.defer = Promise.deferred = function () {
     let dfd = {};
     dfd.promise = new Promise((resolve, reject) => {

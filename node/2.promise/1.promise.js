@@ -1,14 +1,15 @@
-let Promise= require('./promiseme')
+// 这里编写chatch的原理
 
-let p=new Promise((resolve,reject)=>{
-    resolve(1)
-})
 
-p.then().then().then((data)=>{
-    console.log(data,'成功****');
-    
-},err=>{
-    console.log(err,'fail');
+const fs=require('fs');
+const Promise=require('./promise');
+
+new Promise((resolve,reject)=>{
+    reject(1)
+}).then((data)=>{
+    console.log(data);
+}).catch(err=>{
+    console.log(err,'---');
     
 })
 
