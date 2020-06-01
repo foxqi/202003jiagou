@@ -1,6 +1,6 @@
 // 串行：借助回调 第一个的输出是下一个的输入
 // 并发（使用for循环迭代执行）
-const fs = require('fs');
+const fs = require('fs').promises;
 const isPromise = value => typeof value.then === 'function';
 Promise.all = function (promises) {//全部成功才成功
     return new Promise((resolve, reject) => {
