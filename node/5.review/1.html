@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        document.body.style.background = 'red';
+        console.log(1)
+        Promise.resolve().then(() => {
+            console.log(2)
+            document.body.style.background = 'yellow';
+        })
+        console.log(3);
+
+        // 因为代码在微任务运行完成之后才会gui渲染页面，所有宏任务是1，3走完后，进入微任务走2，背景为红色（且背景一直为红色）
+    </script>
+</body>
+
+</html>

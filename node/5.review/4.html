@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        // async 返回的是一个promise（generator + co）
+        // await => yield  如果产出的是一个promise 会调用这个promise.then方法
+        async function async1() {
+            console.log('async1 start');
+            // 浏览器识别async + await await后面跟的是promise的话默认就会直接调用这个promise的then方法
+            async2().then(()=>{
+                console.log('async1 end');
+            })  
+            // await async2();
+            // console.log(async1 end)
+            new Promise((resolve,reject)=>resolve(async2())).then(()=>{
+                console.log('async1 end');
+            });
+        }
+        async function async2() {
+            console.log('async2');
+        }
+        console.log('script start');
+        setTimeout(function() {
+            console.log('setTimeout');
+        }, 0);
+        async1();
+        new Promise(function(resolve) {
+            console.log('promise1');
+            resolve();
+        }).then(function() {
+            console.log('promise2');
+        });
+        console.log('script end');
+        // 默认执行  
+        // script start 
+        //  async1 start 
+        // async2,
+        // promise1,
+        // script end
+        // async1 end 
+        // promise2 
+        // setTimeout
+        // 微任务队列  [async1 end,promise2]
+        // 宏任务队列  [setTimeout]
+    </script>
+</body>
+
+</html>

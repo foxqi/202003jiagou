@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        Promise.resolve().then(() => {
+            console.log('Promise1')
+            setTimeout(() => {
+                console.log('setTimeout2')
+            }, 0);
+        })
+        setTimeout(() => {
+            console.log('setTimeout1');
+            Promise.resolve().then(() => {
+                console.log('Promise2')
+            })
+        }, 0);
+
+        // 宏任务 [setTimeout2]
+        // 微任务 []
+        // Promise1  setTimeout1 Promise2 setTimeout2
+
+        // 1.先想，有俩个队列，一个是宏任务，一个是微任务
+        // 代码先从上到下的执行，执行的过程中发现有一个微任务，一个宏任务。这时候会把p1放在微任务里，s1放到宏任务里，主栈中就执行完毕了
+        // 执行完之后，就开始清空微任务了，就是把p1打印出来，并且在清空的过程中把定时器s2放到宏任务中（宏任务此时为俩个s1，s2）
+        // 微任务执行完毕后，开始渲染gui，但现在没有gui
+        // 开始渲染宏任务，宏任务开始执行，第一个宏任务是s1，所有打印s1
+        // s1执行完之后，又放了一个微任务p2，定时器执行完了又要清空微任务，打印出p2
+        // 最后一个宏任务执行，s2打印出
+    </script>
+</body>
+</html>

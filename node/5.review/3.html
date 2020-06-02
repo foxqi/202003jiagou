@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="button">按钮</div>
+    <script>
+        button.addEventListener('click',()=>{
+            console.log('listener1');
+            Promise.resolve().then(()=>console.log('micro task1'))
+        })
+        button.addEventListener('click',()=>{
+            console.log('listener2');
+            Promise.resolve().then(()=>console.log('micro task2'))
+        })
+        button.click();
+        //  click1() click2()
+
+  
+  //如果是在代码中写的click，那么代码会认为click同步执行，先执行宏任务l1，l2后，在执行微任务mt1,mt2
+// 但如果是在页面中点击button的话，那么宏任务队列的事件，同时执行事件里的l1和微任务mt1，在执行第二个事件里的l2和微任务mt2
+</script>
+</body>
+</html>

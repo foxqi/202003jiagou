@@ -173,6 +173,9 @@ Promise.resolve(100).then().then(()=>{
   - 事件 click、setTimeout、ajax也是一个独立线程
   ![avatar](zImg/进程.jpg)
 
+- 进程是计算机调度的基本单位 进程中包含着线程
+- 进程的面试题（G:\202003jiaogou3\node\5.review）
+
 - 3.宏任务,微任务
   - 宏任务 宿主环境提供的异步方法 都是宏任务 script ui 渲染
   - 微任务 语言标准提供promise mutationObserver
