@@ -84,6 +84,7 @@ baby.setState('被欺负了')
 #### 5.promise
 - https://promisesaplus.com/ 这个网址有   promiseA+ 规范，都是通过这个规范来实现的
 - promise  es6 内部已经实现了。ie不支持promise，需要polyfill  es6-promise
+- promise缺陷默认无法中断，只是不采用返回的结果
 
 - promise 为什么会产生  解决异步问题
   - 1.解决多个异步请求并发  （希望同步最终的结果） Promise.all
@@ -98,16 +99,103 @@ baby.setState('被欺负了')
 - 6.如果promise一旦成功就不能失败，反过来也是一样的
 
 
-// 1.promise 成功和失败的回调的返回值  可以传递到外层的下一个then
-// 2.如果返回的是普通值的话（传递到下一次的成功中，不是错误不是promise就是普通值），出错的情况（一定会走到下一次的失败），可能还要promise的情况（会采用promise的状态，决定走下一次的成功还是失败）
-// 3.错误处理  如果离自己最近的then  没有错误处理  会向下找
-// 4.每次执行完promise.then方法返回的都是一个“新的promise”（promise一旦成功或失败就不能修改状态）
+- 1.promise 成功和失败的回调的返回值  可以传递到外层的下一个then
+- 2.如果返回的是普通值的话（传递到下一次的成功中，不是错误不是promise就是普通值），出错的情况（一定会走到下一次的失败），可能还要promise的情况（会采用promise的状态，决定走下一次的成功还是失败）
+- 3.错误处理  如果离自己最近的then  没有错误处理  会向下找
+- 4.每次执行完promise.then方法返回的都是一个“新的promise”（promise一旦成功或失败就不能修改状态）
 
-// Promise.resolve();//快速创建一个成功的promise
-// Promise.reject();//快速的创建一个失败的promise
-// 区别在于resolve会等待里面的promise执行完毕  reject  不会有等待效果(Promise.reject() 已经报错了 就直接走到catch了)
+- Promise.resolve();//快速创建一个成功的promise
+- Promise.reject();//快速的创建一个失败的promise
+- 区别在于resolve会等待里面的promise执行完毕  reject  不会有等待效果(Promise.reject() 已经报错了 就直接走到catch了)
 
-// finally表示不是最终的意思，而是无论如何都会执行的意思
-// 如果返回一个promise 会等待这个promise  也执行完毕  （如果是失败的promise  会用他的失败原因传给下一个人）
+- finally表示不是最终的意思，而是无论如何都会执行的意思
+- 如果返回一个promise 会等待这个promise  也执行完毕  （如果是失败的promise  会用他的失败原因传给下一个人）
 
-//all 全部成功才成功
+- all 全部成功才成功
+ 
+- promises 将node的api快速的转换成promise的形式
+```
+const fs = require('fs').promises;
+```
+
+- race 赛跑  谁跑的快用谁的（多个接口 请求，我希望采用快的那个）
+
+```
+// 这里是链断掉
+Promise.resolve(100).then().then(()=>{
+    return new Promise((resolve,reject)=>{
+
+    })
+}).then(data=>{
+    console.log(data);
+},err=>{
+    console.log(err);
+})
+```
+
+#### 6. 异步：并发（使用for循环迭代执行）  和 串行（借助回调  第一个的输出是下一个的输入,第一个完成后调用第二个）
+
+#### 7.generator生成器（202003jiagou\node\3.async\4.generator.js）
+
+
+- 原理generator 生成器 =》 遍历器(需要有一个next方法)=》 数组 =》  类数组 
+- generator函数是es6提供的语法，如果碰到yield 就会“暂停”执行 （redux-sage,koa1中）
+
+-  it就是迭代器，迭代器上有个next方法
+
+- async + await = generator + co
+- async await 替换掉了generator 和 co 默认async 函数执行后返回的就是一个promise
+
+
+#### tips
+- 1.对promise理解正确的是
+  - promise解决了回调地狱的问题|promise方便处理多个异步并发请求|promise错误处理非常优雅和方便
+- 2.请分类选出是微任务的有哪些    
+  - Promise.then
+  - nextTick
+  - MutationObserver
+  - MessageChannel
+
+
+#### 浏览器事件环
+- 1.浏览器的进程
+  - 每一个页卡都是进程 (互不影响)
+  - 浏览器也有一个主进程 (用户界面)
+  - 渲染进程 每个页卡里 都有一个渲染进程 (浏览器内核)
+  - 网络进程 （处理请求）
+  - GPU进程 3d绘制
+  - 第三方插件的进程
+
+- 2.渲染进程（包含着多个线程）
+  - GUI渲染线程 （渲染页面的）
+  - js引擎线程 他和页面渲染时互斥
+  - 事件触发线程 独立的线程 EventLoop
+  - 事件 click、setTimeout、ajax也是一个独立线程
+  ![avatar](zImg/进程.jpg)
+
+- 3.宏任务,微任务
+  - 宏任务 宿主环境提供的异步方法 都是宏任务 script ui 渲染
+  - 微任务 语言标准提供promise mutationObserver
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
