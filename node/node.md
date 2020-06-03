@@ -181,7 +181,183 @@ Promise.resolve(100).then().then(()=>{
   - 微任务 语言标准提供promise mutationObserver
 
 
+### node 
+#### Node的基本概念
 
+#### 一.Node是什么?
+Node.js是一个基于 Chrome V8 引擎的JavaScript运行环境(runtime),Node不是一门语言是让js运行在后端的运行时,并且不包括javascript全集,因为在服务端中不包含DOM和BOM,Node也提供了一些新的模块例如http,fs模块等。Node.js 使用了事件驱动、非阻塞式 I/O 的模型，使其轻量又高效并且Node.js 的包管理器 npm，是全球最大的开源库生态系统。事件驱动与非阻塞IO后面我们会一一介绍。到此我们已经对node有了简单的概念。
+
+#### 二.Node解决了哪些问题?
+Node在处理高并发,I/O密集场景有明显的性能优势
+
+- 高并发,是指在同一时间并发访问服务器
+- I/O密集指的是文件操作、网络操作、数据库,相对的有CPU密集,CPU密集指的是逻辑处理运算、压缩、解压、加密、解密
+
+`Web主要场景就是接收客户端的请求读取静态资源和渲染界面,所以Node非常适合Web应用的开发`
+
+#### 三.JS单线程
+javascript在最初设计时设计成了单线程,为什么不是多线程呢？如果多个线程同时操作DOM那岂不会很混乱？这里所谓的单线程指的是主线程是单线程的,所以在Node中主线程依旧是单线程的。
+
+- 单线程特点是节约了内存,并且不需要在切换执行上下文
+- 而且单线程不需要管锁的问题.
+
+#### 四.同步异步和阻塞非阻塞
+  ![avatar](zImg/同步异步和阻塞非阻塞.jpg)
+
+- 阻塞和非阻塞 针对的是调用方
+> 我调用了一个方法之后的状态 fs.readFile
+
+- 同步异步 针对的是被调用方
+> 我调用了一个方法 ，这个方法会给我说他是同步的还是异步的
+
+- 异步非阻塞 （我调用了一个方法，这个方法是异步的，我不想要等待这个方法执行完毕）
+- http 第一个请求 要计算 100万个数相加 第二个请求来了，需要等待第一个人计算完成
+
+> https://nodejs.org/zh-cn/docs/guides/event-loop-timers-and-nexttick/
+
+- node官方文档，事件轮询机制
+>https://nodejs.org/zh-cn/docs/guides/event-loop-timers-and-nexttick/
+```
+// node和前端的区别 前端里面有dom bom 服务端中没有widnow
+
+// 服务端中有global属性  全局对象
+// console.log(Object.keys(global));
+
+// process 进程（重要）
+// Buffer 类型来处理二进制文件
+// clearInterval、clearTimeout
+// setInterval、setTimeout
+// clearImmediate、setImmediate 宏任务
+
+
+// 浏览器以前的方法 还是可以使用的只是默认没有被枚举出来
+// console.dir(global,{showHidden:true})
+
+
+
+// 1.process 默认取值时会像global中查找 (node中有一个模块化系统，是以文件为单位的，每个文件都是一个模块，模块中的this被更改了   {});
+
+// (1)console.log(process.platform); // 可以用这个属性来判断当前执行的系统环境  win32 darwin
+
+// (2)console.log(process.argv); // 1.node.exe  2.node当前执行的文件 （解析用户自己传递的参数）
+// 执行node文件 node 文件名 a b c d  (webpack --mode --config --port --progress)
+
+// let args = process.argv.slice(2);
+// [ '--port', '3000', '--color', 'red', '--config', 'a.js' ]
+
+// let obj = {}
+// args.forEach((item,index) => {
+//     if(item.startsWith('--')){
+//         obj[item.slice(2)] = args[index+1]
+//     }
+// });
+// console.log(obj);
+// (commander TJ) (yargs webpack)  npm  github
+
+
+// 在npm上的模块都需要先安装在使用 (模块内部也提供了几个属性，也可以在模块中直接访问 - 参数)
+const program = require('commander');
+// program.version('1.0.0')
+//     .command('create').action(()=>{
+//         console.log('创建项目')
+//     })
+//     .name('node')
+//     .usage('my-server')
+//     .option('-p,--port <v>', 'set your port')
+//     .option('-c,--config <v>', 'set your config file')
+//     .parse(process.argv); // -- 开头的是key  不带--是值
+
+
+// 当用户在哪执行node命令时 就去哪找配置文件  webpack
+// console.log(process.cwd()); // 当前用户的工作目录 current working directory  (这个目录可以更改，用户自己切换即可 )
+// console.log(__dirname); // 当前文件的所在的目录 这个目录是不能手动修改的
+
+// console.log(process.env.b); // 环境变量  可以根据环境变量实现不同的功能
+// window set key=value  mac export key=value  这样设置的环境变量是临时的变量
+
+// let domain = process.env.NODE_ENV === 'production'? 'localhost':'zfpx.com';
+
+// (1)node中自己实现的微任务  nextTick / queueMicrotask
+// console.log(process.nextTick);
+
+// (2)node中setImmediate 宏任务
+
+// 常见面试题 node中的事件环和浏览器中的区别
+// 微任务有哪些 宏任务有哪些
+
+// 浏览器的事件环和node事件环 执行效果现在是一致的了
+
+setImmediate(() => {
+    console.log('setImmediate')
+    setTimeout(() => { // 进入事件环时 setTimeout 有可能没有完成
+        console.log('timeout')
+    }, 1000);
+});
+
+
+// const fs = require('fs');
+// // poll 完成后 setImmediate -> setTimeout
+// fs.readFile('./name.txt',()=>{
+//     setTimeout(() => { // 进入事件环时 setTimeout 有可能没有完成
+//         console.log('timeout')
+//     }, 0);
+//     setImmediate(() => {
+//         console.log('setImmediate')
+//     });
+// })
+
+// process.nextTick 并不属于事件环的一部分  在本轮代码执行后执行 
+
+setTimeout(() => {
+    console.log(1);
+    Promise.resolve().then(()=>{
+        console.log('then')
+    })
+    process.nextTick(()=>{
+        console.log('nextTick')
+    })
+}, 0);
+setTimeout(() => {
+    console.log(2);
+}, 0);
+
+
+// vue的源码 nextTick 方法 描述了浏览器中常见的 宏任务和微任务
+
+// 宏任务 script / ui / setTiemout / setInterval /requestFrameAnimation / setImmediate / MessageChannel  异步的  click  ajax
+
+// 语言的本身提供的 promise.then mutationObserver nextTick
+```
+
+## module
+
+## 模块化规范
+- Node中的模块化规范 commonjs规范(node自己实现的), es6Module(import export), umd 统一模块规范 (如果浏览器不支持commonjs requirejs,直接将变量放到window上)，amd规范 requirejs cmd规范 seajs
+
+
+## commonjs规范（模块的概念）
+- 可以把复杂的代码拆分成小的模块，方便管理代码和维护
+- 每个模块之间的内容都是相互独立的，互不影响的 (解决变量冲突的问题)  单例模式(不能完全解决,命名空间) 使用自执行函数来解决  
+
+规范的定义：
+- 每个文件都是一个模块
+- 如果你希望模块中的变量被别人使用，可以使用module.exports 导出这个变量
+- 如果另一个模块想使用这个模块导出的结果 需要使用require语法来引用 （同步）
+
+
+## 模块的分类
+- require('fs') 核心模块、内置模块 不是自己写的，也不是安装来的是node中自己提供的,可以直接使用
+- require('commander');  别人写的模块，通过npm install 安装过来的 就是第三方模块，不需要有路径
+- 自定义模块 require('./promise.js'); 自定义模块就是自己写的模块 引用时需要增加路径(相对路径,绝对路径)
+
+
+## 核心模块
+- fs(fileSystem处理文件的)  path(处理路径)  vm（虚拟机模块 沙箱环境）
+
+
+// 所有的方法基本上都是同步方法、异步方法
+// 同步：如果刚刚运行程序可以去使用同步的方法
+// 异步：开启一个服务监听客户端访问，就需要使用异步了  异步是非阻塞的 
 
 
 
