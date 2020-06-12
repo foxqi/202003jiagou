@@ -28,5 +28,49 @@ export default new Vuex.Store({//内部会创造一个vue实例，通信用的
     }
   },
   modules: {
+    a: {
+      state: {
+        c: 100
+      },
+      mutations: {
+        changeAge(state, payload) {
+          console.log('c 更新');
+
+        }
+      }
+    },
+    b: {
+      state: {
+        d: 100
+      },
+      mutations: {
+        changeAge(state, payload) {
+          console.log('d 更新');
+        }
+      },
+      modules: {
+        c: {
+          state: {
+            e: 100
+          },
+          mutations: {
+            changeAge(state, payload) {
+              console.log('c 更新');
+            }
+          }
+        }
+      }
+    }
+
   }
 })
+
+// modules
+// 1.默认模块没有   作用域问题
+// 2.状态不要和模块的名字相同
+// 3.默认计算属性  直接通过getters取值
+// 4.如果增加namespaced:true  会将这个模块的属性   都封装到这个作用域下
+// 5.默认会找当前模块上是否有namespaced，并且将父级的namespace一同算上，做成命名空间
+
+
+
