@@ -1,4 +1,5 @@
 import { forEach } from "../util";
+import Module from './module'
 
 export default class ModuleCollection{
     constructor(options){
@@ -7,18 +8,14 @@ export default class ModuleCollection{
         this.register([],options);    
     }
     register(path,rootModule){//ast语法树解析一样
-        let newModule={
-            _raw:rootModule,
-            _childrren:{},
-            state:rootModule.state
-        }
+        let newModule=new ModuleCollection(rootModule)
         if(path.length==0){
             this.root=newModule
         }else{
             let parent =path.slice(0,-1).reduce((memo,current)=>{
-                return memo._childrren[current]
+                return memo.getChild(current);
             },this.root)
-            parent._childrren[path[path.length-1]]=newModule
+            parent.addChild(path[path.length-1],newModule)
         }
         if(rootModule.modules){
             forEach(rootModule.modules,(module,moduleName)=>{//[b,c]

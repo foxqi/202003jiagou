@@ -8,6 +8,8 @@ class Store {
 
     // 格式化用户传入的参数，格式化成树形结构  更直观一些，后续也更好操作一些
     this._modules= new ModuleCollection(options);
+    console.log( this._modules);
+    
   
    // let state = options.state;//用户传递过来的状态
     // 如果直接将state定义在实例上，稍后这个状态发生变化  视图是不会更新的
