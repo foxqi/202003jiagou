@@ -345,28 +345,22 @@ register这个方法刚开始的时候path的长度是0，所有当前创建的�
 
 
 # ssr
-- 服务端渲染 ssr
-- 浏览器里进行渲染 ,服务端渲染 在服务端将对应的数据请求完，在后端拼装好页面返回给前端
-
-- 客户端渲染不利于SEO优化,服务端渲染的结果可以被浏览器抓取到
-
-- SSR 缺陷就是占用大量cpu和内存
-
-- 客户端渲染可能会出现白屏，通过ssr 可以减少白屏事件
-
-- API不能用 只支持beforeCreate created
-
-- npm init -y
-
-- npm install vue vue-router vuex vue-server-renderer(vue 服务端渲染插件)
-
-- npm install koa(node的框架) koa-router(后端路由) koa-static(后端返回的静态页面)
+- ssr 服务端渲染 （页面在服务器渲染后，返回给前端）
+- spa 页面<div id="app"><div> 无法去爬取dom元素 不利于seo优化
+- 多页面应用有利于seo优化的  像原生开发页面可以建立很多html  去实现seo
+- vue-server-render vue实现了可以在node中解析vue  实现将实例渲染成一个字符串
 
 
+> 预渲染（启动一个浏览器 生成html，加载这个页面的时候先显示html在进行替换，适合一些静态页面） 服务端渲染 （更好 博客新闻类）
 
+#### SSR的缺陷
+- SSR会占很多服务器内存（缓存）
+- 浏览器一些api无法正常使用了  beforCreate (created)
 
-cd
+> 页面渲染完后发起ajax请求数据，用请求来的数据渲染页面（js很大，首屏白屏问题），服务端渲染在后台请求数据直接用于渲染（可以减少白屏时间）
+> 通过一份代码打包 出俩份代码  -> 用node  渲染打包的结果  ->  字符串（没有交互能力） 再把另一份打包的结果插入到页面中
 
-
-
+### 配置一个vue的开发环境
+- webpack(打包) webpack-cli(解析参数)
+- vue-loader
 
