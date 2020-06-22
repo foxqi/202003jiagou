@@ -364,3 +364,15 @@ register这个方法刚开始的时候path的长度是0，所有当前创建的�
 - webpack(打包) webpack-cli(解析参数)
 - vue-loader
 
+
+## 配置一个Vue的开发环境
+- webpack(打包)  webpack-cli(解析参数) webpack-dev-server(webpack开发环境)
+- vue-loader（解析.vue文件）    vue-style-loader（支持服务端渲染）  css-loader（处理css）  vue-template-compiler（解析template标签）
+- @babel/core（babel核心模块）  @babel/preset-env（高级语法转换成低级语法）
+- babel-loader（解析js文件的）
+- html-webpack-plugin（打包html插入到页面中）
+- webpack-merge webpack合并文件
+
+
+
+<!-- http://localhost:8080/index.client.html -->

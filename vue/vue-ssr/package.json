@@ -1,0 +1,29 @@
+{
+  "name": "vue-ssr",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "dependencies": {
+    "@babel/core": "^7.10.3",
+    "@babel/preset-env": "^7.10.3",
+    "babel-loader": "^8.1.0",
+    "css-loader": "^3.6.0",
+    "html-webpack-plugin": "^4.3.0",
+    "vue": "^2.6.11",
+    "vue-loader": "^15.9.2",
+    "vue-style-loader": "^4.1.2",
+    "vue-template-compiler": "^2.6.11",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.12",
+    "webpack-dev-server": "^3.11.0",
+    "webpack-merge": "^4.2.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "client:build": "webpack --config build/webpack.client.js",
+    "client:dev":"webpack-dev-server --config build/webpack.client.js",
+    "server:build":"webpack --config build/webpack.server.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
