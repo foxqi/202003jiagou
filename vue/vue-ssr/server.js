@@ -13,23 +13,24 @@ let vm = new Vue({
     },
     template:'<div>hello {{name}}</div>'
 })
-const template =fs.readFileSync('./temp.html','utf8')
-let render = VueServerRenderer.createRenderer({
-    template
+const serverBundle= fs.readFileSync('./dist/server.bundle.js','utf8')
+const template =fs.readFileSync('./dist/index.ssr.html','utf8')
+
+let render = VueServerRenderer.createBundleRenderer(serverBundle,{
+   template
 })
-// 注册一个路由  当访问/时  而且是get请求，就会执行对应的函数
-router.get('/',async(ctx)=>{//里面包含浏览器和服务端的req/res的一些信息
-   ctx.body=await render.renderToString(vm)//用渲染器将vue的实例渲染成一个字符串
+// 通过服务端渲染对应的服务端打包后的结果
+router.get('/',async(ctx)=>{
+   // 如果渲染的内容  需要增添样式 需要采用回调的方式
+   ctx.body=await new Promise((resolve,reject)=>{
+      render.renderToString((err,html)=>{
+         resolve(html)
+      })
+   })
 })
 
-app.use(router.routes());//将路由注册上
+app.use(router.routes());
 app.listen(3000)
-
-
-
-//nodemon  它是node的监视器，监视代码变化
-//npm install nodemon -g
-//nodemon server.js
 
 
 

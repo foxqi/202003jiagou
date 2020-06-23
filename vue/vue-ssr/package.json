@@ -6,11 +6,16 @@
   "dependencies": {
     "@babel/core": "^7.10.3",
     "@babel/preset-env": "^7.10.3",
+    "@koa/router": "^9.0.1",
     "babel-loader": "^8.1.0",
+    "concurrently": "^5.2.0",
     "css-loader": "^3.6.0",
     "html-webpack-plugin": "^4.3.0",
+    "koa": "^2.13.0",
+    "nodemon": "^2.0.4",
     "vue": "^2.6.11",
     "vue-loader": "^15.9.2",
+    "vue-server-renderer": "^2.6.11",
     "vue-style-loader": "^4.1.2",
     "vue-template-compiler": "^2.6.11",
     "webpack": "^4.43.0",
@@ -20,9 +25,10 @@
   },
   "devDependencies": {},
   "scripts": {
-    "client:build": "webpack --config build/webpack.client.js",
-    "client:dev":"webpack-dev-server --config build/webpack.client.js",
-    "server:build":"webpack --config build/webpack.server.js"
+    "client:build": "webpack --config build/webpack.client.js --watch",
+    "client:dev": "webpack-dev-server --config build/webpack.client.js",
+    "server:build": "webpack --config build/webpack.server.js --watch",
+    "all": "concurrently \"npm run client:build\" \"npm run server:build\""
   },
   "author": "",
   "license": "ISC"

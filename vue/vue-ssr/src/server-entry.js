@@ -3,7 +3,7 @@
 // 如果跑在服务端上，不能所有人用的都是一个实例
 
 
-import creatApp from './app'
+import createApp from './app'
 
 // 服务端渲染打包需要返回一个函数
 
